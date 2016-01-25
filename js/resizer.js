@@ -157,13 +157,13 @@
 
       ctxMask.globalCompositeOperation = 'destination-out';
 
-      ctxMask.translate(this._container.width / 2, this._container.height / 2);
+      ctxMask.translate( mask.width / 2, mask.height / 2);
       ctxMask.fillRect(
         rectangle.rectX - lineWidth / 2,
         rectangle.rectY - lineWidth / 2,
         rectangle.rectWidth + lineWidth,
         rectangle.rectHeight + lineWidth);
-      this._ctx.drawImage(mask, -this._container.width / 2, -this._container.height / 2);
+      this._ctx.drawImage(mask, -mask.width / 2, -mask.height / 2);
 
       this._ctx.restore();
     },
