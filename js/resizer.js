@@ -122,7 +122,11 @@
 
       // Отрисовка прямоугольника, обозначающего область изображения после
       // кадрирования. Координаты задаются от центра.
-      this._ctx.strokeRect(croppedRect.rectX, croppedRect.rectY, croppedRect.rectWidth, croppedRect.rectHeight);
+      this._ctx.strokeRect(
+        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
+        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
+        this._resizeConstraint.side - this._ctx.lineWidth / 2,
+        this._resizeConstraint.side - this._ctx.lineWidth / 2);
 
       var imageSize = this._image.naturalWidth + ' x ' + this._image.naturalHeight;
       var axisX = 0;
@@ -159,11 +163,12 @@
 
       ctxMask.translate( mask.width / 2, mask.height / 2);
       ctxMask.fillRect(
-        rectangle.rectX - lineWidth / 2,
-        rectangle.rectY - lineWidth / 2,
-        rectangle.rectWidth + lineWidth,
-        rectangle.rectHeight + lineWidth);
+        rectangle.rectX,
+        rectangle.rectY,
+        rectangle.rectWidth + 1.5 * lineWidth,
+        rectangle.rectHeight + 1.5 * lineWidth);
       this._ctx.drawImage(mask, -mask.width / 2, -mask.height / 2);
+      //this._drawDottedRectangle('x', rectangle.rectX, rectangle.rectY, rectangle.rectWidth + 1.5 * lineWidth, rectangle.rectHeight + 1.5 * lineWidth, 10, '#ffffff', 2);
 
       this._ctx.restore();
     },
@@ -181,6 +186,40 @@
       this._ctx.textAlign = 'center';
 
       this._ctx.fillText(rectSize, axisX, axisY);
+    },
+
+    /**
+     * Рисуем рамку точками
+     * @param {string} axis
+     * @param {number} startPointX
+     * @param {number} startPointY
+     * @param {number} rectWidth
+     * @param {number} rectHeight
+     * @param {number} lineStep
+     * @param {string} lineColor
+     * @param {number} lineWidth
+     * @private
+     */
+    _drawDottedRectangle: function(axis, startPointX, startPointY, rectWidth, rectHeight, lineStep, lineColor, lineWidth) {
+      this._ctx.beginPath();
+      this._ctx.fillStyle = lineColor;
+
+      var endPointX = startPointX + rectWidth;
+      for ( var i = startPointX; i <= endPointX; i += lineStep) {
+        this._ctx.arc( i, startPointY, lineWidth, 0, Math.PI * 2, true );
+      }
+      this._ctx.closePath();
+      this._ctx.fill();
+
+      this._ctx.beginPath();
+      this._ctx.fillStyle = lineColor;
+      var endPointY = startPointY + rectHeight;
+      for ( i = startPointY; i <= endPointY; i += lineStep) {
+        this._ctx.arc( endPointX, i, lineWidth, 0, Math.PI * 2, true );
+      }
+
+      this._ctx.closePath();
+      this._ctx.fill();
     },
 
     /**
