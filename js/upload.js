@@ -72,33 +72,33 @@
    * @return {boolean}
    */
   function resizeFormIsValid() {
-    if(resizeForm['resize-x'].value == '') {
+    if (resizeForm['resize-x'].value === '') {
       resizeForm['resize-x'].value = 0;
     }
-    if(resizeForm['resize-y'].value == '') {
+    if (resizeForm['resize-y'].value === '') {
       resizeForm['resize-y'].value = 0;
     }
-    if(resizeForm['resize-size'].value == '') {
+    if (resizeForm['resize-size'].value === '') {
       resizeForm['resize-size'].value = 0;
     }
 
-    if (resizeForm['resize-x'].value + resizeForm['resize-size'].value > currentResizer._image.naturalWidth) {
-      resizeForm['resize-fwd'].disabled = true;
-      console.log('Сумма значений полей «слева» и «сторона» не должна быть больше ширины исходного изображения.');
-      return false;
-    }
-    if (resizeForm['resize-y'].value + resizeForm['resize-size'].value > currentResizer._image.naturalHeight) {
-      resizeForm['resize-fwd'].disabled = true;
-      console.log('Сумма значений полей «сверху» и «сторона» не должна быть больше высоты исходного изображения.');
-      return false;
-    }
-    if (resizeForm['resize-x'].value < 0 || resizeForm['resize-y'] < 0 || resizeForm['resize-size'].value < 0) {
-      resizeForm['resize-fwd'].disabled = true;
-      console.log('Поля «сверху»,«слева» и «сторона» не могут быть отрицательными.');
-      return false;
-    }
-    resizeForm['resize-fwd'].disabled = false;
-    return true;
+    //if (resizeForm['resize-x'].value + resizeForm['resize-size'].value > currentResizer._image.naturalWidth) {
+    //  resizeForm['resize-fwd'].disabled = true;
+    //  console.log('Сумма значений полей «слева» и «сторона» не должна быть больше ширины исходного изображения.');
+    //  return false;
+    //}
+    //if (resizeForm['resize-y'].value + resizeForm['resize-size'].value > currentResizer._image.naturalHeight) {
+    //  resizeForm['resize-fwd'].disabled = true;
+    //  console.log('Сумма значений полей «сверху» и «сторона» не должна быть больше высоты исходного изображения.');
+    //  return false;
+    //}
+    //if (resizeForm['resize-x'].value < 0 || resizeForm['resize-y'].value < 0 || resizeForm['resize-size'].value < 0) {
+    //  resizeForm['resize-fwd'].disabled = true;
+    //  console.log('Поля «сверху»,«слева» и «сторона» не могут быть отрицательными.');
+    //  return false;
+    //}
+    //resizeForm['resize-fwd'].disabled = false;
+    return (resizeForm['resize-x'].value + resizeForm['resize-size'].value > currentResizer._image.naturalWidth && resizeForm['resize-y'].value + resizeForm['resize-size'].value > currentResizer._image.naturalHeight && resizeForm['resize-x'].value < 0 || resizeForm['resize-y'].value < 0 || resizeForm['resize-size'].value < 0);
   }
 
 
@@ -160,9 +160,9 @@
   /**
    * Валидация формы при изменение вводимых данных
    */
-   resizeForm.onchange = function () {
-     resizeFormIsValid();
-   }
+  resizeForm.onchange = function() {
+    resizeFormIsValid();
+  };
 
 
   function hideMessage() {
