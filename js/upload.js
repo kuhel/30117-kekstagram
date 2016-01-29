@@ -98,7 +98,19 @@
     //  return false;
     //}
     //resizeForm['resize-fwd'].disabled = false;
-    return (resizeForm['resize-x'].value + resizeForm['resize-size'].value > currentResizer._image.naturalWidth && resizeForm['resize-y'].value + resizeForm['resize-size'].value > currentResizer._image.naturalHeight && resizeForm['resize-x'].value < 0 || resizeForm['resize-y'].value < 0 || resizeForm['resize-size'].value < 0);
+
+    var isXSideLargeThenNaturalWidth = parseInt(resizeForm['resize-x'].value) + parseInt(resizeForm['resize-size'].value) < currentResizer._image.naturalWidth;
+    var isYSideLargeThenNaturalHeight = parseInt(resizeForm['resize-y'].value) + parseInt(resizeForm['resize-size'].value) < currentResizer._image.naturalHeight;
+    var isTopAndLeftPositive = parseInt(resizeForm['resize-x'].value) < 0 || parseInt(resizeForm['resize-y'].value) < 0 || parseInt(resizeForm['resize-size'].value) < 0;
+
+    if (isXSideLargeThenNaturalWidth && isYSideLargeThenNaturalHeight && isTopAndLeftPositive) {
+      resizeForm['resize-fwd'].disabled = true;
+      return false;
+    }
+    else {
+      resizeForm['resize-fwd'].disabled = false;
+      return true;
+    }
   }
 
 
