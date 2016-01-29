@@ -82,26 +82,13 @@
       resizeForm['resize-size'].value = 0;
     }
 
-    //if (resizeForm['resize-x'].value + resizeForm['resize-size'].value > currentResizer._image.naturalWidth) {
-    //  resizeForm['resize-fwd'].disabled = true;
-    //  console.log('Сумма значений полей «слева» и «сторона» не должна быть больше ширины исходного изображения.');
-    //  return false;
-    //}
-    //if (resizeForm['resize-y'].value + resizeForm['resize-size'].value > currentResizer._image.naturalHeight) {
-    //  resizeForm['resize-fwd'].disabled = true;
-    //  console.log('Сумма значений полей «сверху» и «сторона» не должна быть больше высоты исходного изображения.');
-    //  return false;
-    //}
-    //if (resizeForm['resize-x'].value < 0 || resizeForm['resize-y'].value < 0 || resizeForm['resize-size'].value < 0) {
-    //  resizeForm['resize-fwd'].disabled = true;
-    //  console.log('Поля «сверху»,«слева» и «сторона» не могут быть отрицательными.');
-    //  return false;
-    //}
-    //resizeForm['resize-fwd'].disabled = false;
+    var resizeX = parseInt(resizeForm['resize-x'].value, 10);
+    var resizeY = parseInt(resizeForm['resize-y'].value, 10);
+    var resizeSize = parseInt(resizeForm['resize-size'].value, 10);
 
-    var isXSideLargeThenNaturalWidth = parseInt(resizeForm['resize-x'].value, 10) + parseInt(resizeForm['resize-size'].value, 10) < currentResizer._image.naturalWidth;
-    var isYSideLargeThenNaturalHeight = parseInt(resizeForm['resize-y'].value, 10) + parseInt(resizeForm['resize-size'].value, 10) < currentResizer._image.naturalHeight;
-    var isTopAndLeftPositive = parseInt(resizeForm['resize-x'].value, 10) < 0 || parseInt(resizeForm['resize-y'].value, 10) < 0 || parseInt(resizeForm['resize-size'].value, 10) < 0;
+    var isXSideLargeThenNaturalWidth = resizeX + resizeSize < currentResizer._image.naturalWidth;
+    var isYSideLargeThenNaturalHeight =  resizeY + resizeSize < currentResizer._image.naturalHeight;
+    var isTopAndLeftPositive = resizeX < 0 || resizeY < 0 || resizeSize < 0;
 
     if (isXSideLargeThenNaturalWidth && isYSideLargeThenNaturalHeight && isTopAndLeftPositive) {
       resizeForm['resize-fwd'].disabled = true;
