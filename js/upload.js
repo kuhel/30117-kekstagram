@@ -106,8 +106,7 @@
     if (isXSideLargeThenNaturalWidth && isYSideLargeThenNaturalHeight && isTopAndLeftPositive) {
       resizeForm['resize-fwd'].disabled = true;
       return false;
-    }
-    else {
+    } else {
       resizeForm['resize-fwd'].disabled = false;
       return true;
     }
