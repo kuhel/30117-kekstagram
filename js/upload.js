@@ -87,7 +87,7 @@
     var resizeSize = parseInt(resizeForm['resize-size'].value, 10);
 
     var isXSideLargeThenNaturalWidth = resizeX + resizeSize < currentResizer._image.naturalWidth;
-    var isYSideLargeThenNaturalHeight =  resizeY + resizeSize < currentResizer._image.naturalHeight;
+    var isYSideLargeThenNaturalHeight = resizeY + resizeSize < currentResizer._image.naturalHeight;
     var isTopAndLeftPositive = resizeX < 0 || resizeY < 0 || resizeSize < 0;
 
     if (isXSideLargeThenNaturalWidth && isYSideLargeThenNaturalHeight && isTopAndLeftPositive) {
