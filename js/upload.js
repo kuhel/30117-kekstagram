@@ -99,9 +99,9 @@
     //}
     //resizeForm['resize-fwd'].disabled = false;
 
-    var isXSideLargeThenNaturalWidth = parseInt(resizeForm['resize-x'].value) + parseInt(resizeForm['resize-size'].value) < currentResizer._image.naturalWidth;
-    var isYSideLargeThenNaturalHeight = parseInt(resizeForm['resize-y'].value) + parseInt(resizeForm['resize-size'].value) < currentResizer._image.naturalHeight;
-    var isTopAndLeftPositive = parseInt(resizeForm['resize-x'].value) < 0 || parseInt(resizeForm['resize-y'].value) < 0 || parseInt(resizeForm['resize-size'].value) < 0;
+    var isXSideLargeThenNaturalWidth = parseInt(resizeForm['resize-x'].value, 10) + parseInt(resizeForm['resize-size'].value, 10) < currentResizer._image.naturalWidth;
+    var isYSideLargeThenNaturalHeight = parseInt(resizeForm['resize-y'].value, 10) + parseInt(resizeForm['resize-size'].value, 10) < currentResizer._image.naturalHeight;
+    var isTopAndLeftPositive = parseInt(resizeForm['resize-x'].value, 10) < 0 || parseInt(resizeForm['resize-y'].value, 10) < 0 || parseInt(resizeForm['resize-size'].value, 10) < 0;
 
     if (isXSideLargeThenNaturalWidth && isYSideLargeThenNaturalHeight && isTopAndLeftPositive) {
       resizeForm['resize-fwd'].disabled = true;
