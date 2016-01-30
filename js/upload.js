@@ -69,7 +69,7 @@
 
   /**
    * Проверяет, валидны ли данные, в форме кадрирования.
-   * @return {boolean}
+   * @returns {boolean}
    */
   function resizeFormIsValid() {
     return true;
@@ -202,11 +202,14 @@
     }
   };
 
+
+  var docCookies = new docCookies;
+
   /**
    * Вычисления срока жизни куки по дате рождения пользователя
    * Формат даты дд/мм
    * @param {birthday} string
-   * return {expireDate} Object
+   * @returns {expireDate} string
    */
   function cookieExpireDateByBirthday(birhday) {
     var todayDate = new Date();
@@ -298,7 +301,6 @@
    */
   function getLastFilter() {
     var lastFilter = docCookies.getItem('filter');
-    debugger;
     if (lastFilter) {
       filterImage.className = 'filter-image-preview ' + lastFilter;
       filterForm['upload-' + lastFilter].setAttribute('checked', 'checked');
