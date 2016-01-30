@@ -29,7 +29,6 @@ var docCookies = {
   setItem: function (sKey, sValue, vEnd, sPath, sDomain, bSecure) {
     if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) { return false; }
     var sExpires = "";
-    debugger;
     if (vEnd) {
       switch (vEnd.constructor) {
         case Number:
