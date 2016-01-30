@@ -203,6 +203,39 @@
   };
 
   /**
+   * Вычисления срока жизни куки по дате рождения пользователя
+   * Формат даты дд/мм
+   * @param {birthday} string
+   * return {expireDate} Object
+   */
+  function cookieExpireDateByBirthday (birhday) {
+    var todayDate = new Date;
+
+    var formatDate = birhday.split('/');
+    var birthdayDate = new Date();
+    birthdayDate.setMonth(formatDate[1] - 1);
+    birthdayDate.setDate(formatDate[0]);
+
+    if (todayDate.getMonth() - 1 > formatDate[1]) {
+      birthdayDate.setYear(todayDate.getFullYear());
+    }
+    else if(todayDate.getMonth() - 1 == formatDate[1]) {
+      if(todayDate.getDay() < formatDate[0]) {
+        birthdayDate.setYear(todayDate.getFullYear() - 1);
+      } else {
+        birthdayDate.setYear(todayDate.getFullYear());
+      }
+    } else {
+      birthdayDate.setYear(todayDate.getFullYear() - 1);
+    }
+
+
+    var expireDate = new Date(todayDate.valueOf() + (todayDate.valueOf() - birthdayDate.valueOf()));
+
+    return expireDate.toUTCString();
+  };
+
+  /**
    * Сброс формы фильтра. Показывает форму кадрирования.
    * @param {Event} evt
    */
@@ -223,6 +256,12 @@
 
     cleanupResizer();
     updateBackground();
+
+
+    var BIRTHDAY_DATE = '13/11'
+    var cookieExpires = cookieExpireDateByBirthday(BIRTHDAY_DATE);
+    var filterName = (filterImage.classList[1]) ? filterImage.classList[1] : 'no-filter';
+    docCookies.setItem('filter', filterName, cookieExpires);
 
     filterForm.classList.add('invisible');
     uploadForm.classList.remove('invisible');
