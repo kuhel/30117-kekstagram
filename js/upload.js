@@ -1,4 +1,5 @@
 /* global Resizer: true */
+/* global docCookies: true */
 
 /**
  * @fileoverview
@@ -255,7 +256,6 @@
 
     cleanupResizer();
     updateBackground();
-
 
     var BIRTHDAY_DATE = '13/11';
     var cookieExpires = cookieExpireDateByBirthday(BIRTHDAY_DATE);
