@@ -25,11 +25,12 @@
   function getElementFromTemplate(data) {
     var templateSelector = 'picture-template';
     var template = document.getElementById(templateSelector);
-
+    debugger;
+    
     if ('content' in template) {
-      var element = template.content.children[0].cloneNode(true);
+      var element = template.content.childNodes[1].cloneNode(true);
     } else {
-      var element = template.children[0].cloneNode(true);
+      var element = template.childNodes[1].cloneNode(true);
     }
 
     var ELEMENT_IMAGE_WIDTH = 182;
