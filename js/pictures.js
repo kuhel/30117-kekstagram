@@ -25,7 +25,6 @@
   function getElementFromTemplate(data) {
     var templateSelector = 'picture-template';
     var template = document.getElementById(templateSelector);
-    debugger;
     
     if ('content' in template) {
       var element = template.content.childNodes[1].cloneNode(true);
