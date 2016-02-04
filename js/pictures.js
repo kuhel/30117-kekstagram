@@ -1,3 +1,5 @@
+/* global pictures: true */
+
 /**
  * @fileoverview
  * @author Gleb Vorontsov
@@ -25,11 +27,12 @@
   function getElementFromTemplate(data) {
     var templateSelector = 'picture-template';
     var template = document.getElementById(templateSelector);
-    
+    var element;
+
     if ('content' in template) {
-      var element = template.content.childNodes[1].cloneNode(true);
+      element = template.content.childNodes[1].cloneNode(true);
     } else {
-      var element = template.childNodes[1].cloneNode(true);
+      element = template.childNodes[1].cloneNode(true);
     }
 
     var ELEMENT_IMAGE_WIDTH = 182;
