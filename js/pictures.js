@@ -13,11 +13,43 @@
   var filtersContainer = document.querySelector('.filters');
   filtersContainer.classList.remove('hidden');
 
-  //Создаёт для каждой записи массива pictures блок фотографии на основе шаблона #picture-template
-  pictures.forEach(function(picture) {
-    var element = getElementFromTemplate(picture);
-    picturesContainer.appendChild(element);
-  });
+
+
+  /**
+   * Отрисовка списка картинок
+   * @param {Array.<Object>} pictures
+   */
+  function renderPictures (pictures) {
+    picturesContainer.innerHTML = '';
+    var fragment = document.createDocumentFragment();
+
+    pictures.forEach(function(picture) {
+      var element = getElementFromTemplate(picture);
+      fragment.appendChild(element);
+    });
+
+    picturesContainer.appendChild(fragment);
+  }
+
+
+  /**
+   * Получаем списко картинок с сервера
+   */
+  function getPictures() {
+    var XHRequest = new XMLHttpRequest();
+
+    XHRequest.open = ('GET', 'http://o0.github.io/assets/json/pictures.json');
+    XHRequest.onload = function (event) {
+var rawData = event.target.response;
+      var loadedPictures = JSON.parse(rawData);
+
+      renderPictures(loadedPictures);
+    }
+
+    XHRequest.send;
+  }
+
+  getPictures();
 
   /**
    * Создаем новый DOM элемент на основе шаблона
