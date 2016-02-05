@@ -73,8 +73,34 @@
    * @returns {boolean}
    */
   function resizeFormIsValid() {
-    return true;
+    if (resizeForm['resize-x'].value === '') {
+      resizeForm['resize-x'].value = 0;
+    }
+    if (resizeForm['resize-y'].value === '') {
+      resizeForm['resize-y'].value = 0;
+    }
+    if (resizeForm['resize-size'].value === '') {
+      resizeForm['resize-size'].value = 0;
+    }
+
+    var resizeX = parseInt(resizeForm['resize-x'].value, 10);
+    var resizeY = parseInt(resizeForm['resize-y'].value, 10);
+    var resizeSize = parseInt(resizeForm['resize-size'].value, 10);
+
+    var isXSideLargeThenNaturalWidth = resizeX + resizeSize < currentResizer._image.naturalWidth;
+    var isYSideLargeThenNaturalHeight = resizeY + resizeSize < currentResizer._image.naturalHeight;
+    var isTopAndLeftPositive = resizeX < 0 || resizeY < 0 || resizeSize < 0;
+
+    if (isXSideLargeThenNaturalWidth && isYSideLargeThenNaturalHeight && isTopAndLeftPositive) {
+      resizeForm['resize-fwd'].disabled = true;
+      return false;
+    } else {
+      resizeForm['resize-fwd'].disabled = false;
+      return true;
+    }
   }
+
+
 
   /**
    * Форма загрузки изображения.
@@ -104,6 +130,7 @@
    */
   var uploadMessage = document.querySelector('.upload-message');
 
+
   /**
    * @param {Action} action
    * @param {string=} message
@@ -128,6 +155,14 @@
     uploadMessage.classList.toggle('upload-message-error', isError);
     return uploadMessage;
   }
+
+  /**
+   * Валидация формы при изменение вводимых данных
+   */
+  resizeForm.onchange = function() {
+    resizeFormIsValid();
+  };
+
 
   function hideMessage() {
     uploadMessage.classList.add('invisible');
