@@ -11,7 +11,7 @@
   var pictures = [];
   var picturesContainer = document.querySelector('.pictures');
   var filtersContainer = document.querySelector('.filters');
-  var activeFilter = '';
+  var activeFilter = 'filter-popular';
   var filters = document.querySelectorAll('.filters-radio');
 
 
@@ -45,7 +45,7 @@
     for (var i = 0; i < filters.length; i++) {
 
       if (filters[i].checked === true) {
-        var onLoadFilter = filters[i].id
+        var onLoadFilter = filters[i].id;
         console.log(filters[i].id);
         setActiveFilter(onLoadFilter);
       }
@@ -67,14 +67,15 @@
    */
   function setActiveFilter(id) {
     var filteredPictures = pictures.slice(0);
-    if (activeFilter === id) {
-      return;
-    }
 
     activeFilter = id;
 
-    document.querySelector('#' + activeFilter).setAttribute('checked', 'false');
-    document.querySelector('#' + id).setAttribute('checked', 'true');
+
+    for (var i = 0; i < document.querySelectorAll('.filters-radio').length; i++) {
+      document.querySelectorAll('.filters-radio')[i].setAttribute('checked', 'false');
+    }
+
+    document.querySelector('#' + activeFilter).setAttribute('checked', 'true');
 
     if (id === 'filter-new') {
       filteredPictures = filteredPictures.sort(function(a, b) {
@@ -108,7 +109,7 @@
       var rawData = event.target.response;
       pictures = JSON.parse(rawData);
       document.querySelector('.pictures').classList.remove('pictures-loading');
-      renderPictures(pictures);
+      setActiveFilter(activeFilter);
     };
 
     XHRequest.send();
