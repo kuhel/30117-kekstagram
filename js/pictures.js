@@ -11,7 +11,8 @@
   var pictures = [];
   var picturesContainer = document.querySelector('.pictures');
   var filtersContainer = document.querySelector('.filters');
-  var activeFilter = 'filter-popular';
+  var activeFilter = '';
+  var defaultFilter = 'filter-popular';
   var filters = document.querySelectorAll('.filters-radio');
 
 
@@ -44,12 +45,6 @@
 
     for (var i = 0; i < filters.length; i++) {
 
-      if (filters[i].checked === true) {
-        var onLoadFilter = filters[i].id;
-        console.log(filters[i].id);
-        setActiveFilter(onLoadFilter);
-      }
-
       filters[i].onclick = function(event) {
         var clickedFilterID = event.target.id;
         setActiveFilter(clickedFilterID);
@@ -74,9 +69,6 @@
     activeFilter = id;
 
 
-    for (var i = 0; i < document.querySelectorAll('.filters-radio').length; i++) {
-      document.querySelectorAll('.filters-radio')[i].setAttribute('checked', 'false');
-    }
 
     document.querySelector('#' + activeFilter).setAttribute('checked', 'true');
 
@@ -112,7 +104,7 @@
       var rawData = event.target.response;
       pictures = JSON.parse(rawData);
       document.querySelector('.pictures').classList.remove('pictures-loading');
-      setActiveFilter(activeFilter);
+      setActiveFilter(defaultFilter);
     };
 
     XHRequest.send();
