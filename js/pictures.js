@@ -14,12 +14,7 @@
   var activeFilter = 'filter-popular';
   var filters = document.querySelectorAll('.filters-radio');
 
-  for (var i = 0; i < filters.length; i++) {
-    filters[i].onclick = function(event) {
-      var clickedFilterID = event.target.id;
-      setActiveFilter(clickedFilterID);
-    };
-  }
+
 
   filtersContainer.classList.remove('hidden');
 
@@ -42,6 +37,23 @@
   }
 
   /**
+   * Установка фильтрации
+   *
+   */
+  function setFilter() {
+
+    for (var i = 0; i < filters.length; i++) {
+      filters[i].onclick = function(event) {
+        var clickedFilterID = event.target.id;
+        setActiveFilter(clickedFilterID);
+      };
+    }
+  }
+
+  setFilter();
+
+
+  /**
    * Установка выбранного фильтра
    * @param {string} id
    */
@@ -50,6 +62,8 @@
     if (activeFilter === id) {
       return;
     }
+
+    activeFilter = id;
 
     document.querySelector('#' + activeFilter).setAttribute('checked', 'false');
     document.querySelector('#' + id).setAttribute('checked', 'true');
@@ -107,6 +121,7 @@
     var element;
     var ELEMENT_IMAGE_WIDTH = 182;
     var ELEMENT_IMAGE_HEIGHT = 182;
+    var IMAGE_LOAD_TIMEOUT = 10000;
     var elementImage = new Image(ELEMENT_IMAGE_WIDTH, ELEMENT_IMAGE_HEIGHT);
 
     if ('content' in template) {
@@ -121,7 +136,7 @@
 
     var loadErrorTimeout = setTimeout(function() {
       element.classList.add('picture-load-failure');
-    }, 10000);
+    }, IMAGE_LOAD_TIMEOUT);
 
     elementImage.onload = function() {
       element.replaceChild(elementImage, templateImage);

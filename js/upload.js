@@ -241,8 +241,8 @@
   /**
    * Вычисления срока жизни куки по дате рождения пользователя
    * Формат даты дд/мм
-   * @param {birthday} string
-   * @returns {expireDate} string
+   * @param {string} birthday
+   * @returns {string} expireDate
    */
   function cookieExpireDateByBirthday(birhday) {
     var todayDate = new Date();
