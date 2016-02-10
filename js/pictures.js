@@ -11,7 +11,7 @@
   var pictures = [];
   var picturesContainer = document.querySelector('.pictures');
   var filtersContainer = document.querySelector('.filters');
-  var activeFilter = 'filter-popular';
+  var activeFilter = '';
   var filters = document.querySelectorAll('.filters-radio');
 
 
@@ -43,6 +43,13 @@
   function setFilter() {
 
     for (var i = 0; i < filters.length; i++) {
+
+      if (filters[i].checked === true) {
+        var onLoadFilter = filters[i].id
+        console.log(filters[i].id);
+        setActiveFilter(onLoadFilter);
+      }
+
       filters[i].onclick = function(event) {
         var clickedFilterID = event.target.id;
         setActiveFilter(clickedFilterID);
@@ -50,6 +57,7 @@
     }
   }
 
+  getPictures();
   setFilter();
 
 
@@ -106,7 +114,7 @@
     XHRequest.send();
   }
 
-  getPictures();
+
 
 
 
