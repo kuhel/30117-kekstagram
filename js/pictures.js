@@ -68,6 +68,9 @@
   function setActiveFilter(id) {
     var filteredPictures = pictures.slice(0);
 
+    if ( activeFilter === id ) {
+      return;
+    }
     activeFilter = id;
 
 
