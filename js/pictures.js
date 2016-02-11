@@ -12,7 +12,7 @@
   var picturesContainer = document.querySelector('.pictures');
   var filtersContainer = document.querySelector('.filters');
   var activeFilter = '';
-  var defaultFilter = 'filter-popular';
+  var DEFAULT_FILTER = 'filter-popular';
   var filters = document.querySelectorAll('.filters-radio');
 
 
@@ -98,13 +98,13 @@
     var XHRequest = new XMLHttpRequest();
 
     XHRequest.open('GET', 'http://o0.github.io/assets/json/pictures.json');
-    XHRequest.timeout = 10000;
+    XHRequest.timeout = IMAGE_LOAD_TIMEOUT;
     document.querySelector('.pictures').classList.add('pictures-loading');
     XHRequest.onload = function(event) {
       var rawData = event.target.response;
       pictures = JSON.parse(rawData);
       document.querySelector('.pictures').classList.remove('pictures-loading');
-      setActiveFilter(defaultFilter);
+      setActiveFilter(DEFAULT_FILTER);
     };
 
     XHRequest.send();
