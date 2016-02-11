@@ -11,9 +11,13 @@
   var pictures = [];
   var picturesContainer = document.querySelector('.pictures');
   var filtersContainer = document.querySelector('.filters');
-  var activeFilter = '';
-  var DEFAULT_FILTER = 'filter-popular';
   var filters = document.querySelectorAll('.filters-radio');
+  var activeFilter = '';
+
+  var DEFAULT_FILTER = 'filter-popular';
+  var ELEMENT_IMAGE_WIDTH = 182;
+  var ELEMENT_IMAGE_HEIGHT = 182;
+  var IMAGE_LOAD_TIMEOUT = 10000;
 
 
 
@@ -123,9 +127,6 @@
     var templateSelector = 'picture-template';
     var template = document.getElementById(templateSelector);
     var element;
-    var ELEMENT_IMAGE_WIDTH = 182;
-    var ELEMENT_IMAGE_HEIGHT = 182;
-    var IMAGE_LOAD_TIMEOUT = 10000;
     var elementImage = new Image(ELEMENT_IMAGE_WIDTH, ELEMENT_IMAGE_HEIGHT);
 
     if ('content' in template) {
