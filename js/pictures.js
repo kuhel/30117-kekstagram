@@ -63,14 +63,17 @@
    */
   function setFilter() {
 
-    for (var i = 0; i < filters.length; i++) {
-
-      filters[i].onclick = function(event) {
-        var clickedFilterID = event.target.id;
-        setActiveFilter(clickedFilterID);
-      };
-    }
+    filtersContainer.addEventListener('click', function(evt) {
+      var clickedElement = evt.target;
+      if (clickedElement.classList.contains('filters-radio')) {
+        setActiveFilter(clickedElement.id);
+      }
+    });
   }
+
+  window.addEventListener('load', addPicturesPage);
+
+  window.addEventListener('resize', addPicturesPage);
 
   window.addEventListener('scroll', function() {
     clearTimeout(scrollTimeout);
