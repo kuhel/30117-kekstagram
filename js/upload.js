@@ -24,6 +24,9 @@
     CUSTOM: 2
   };
 
+
+
+
   /**
    * Регулярное выражение, проверяющее тип загружаемого файла. Составляется
    * из ключей FileType.
@@ -68,38 +71,6 @@
     backgroundElement.style.backgroundImage = 'url(' + images[randomImageNumber] + ')';
   }
 
-  /**
-   * Проверяет, валидны ли данные, в форме кадрирования.
-   * @returns {boolean}
-   */
-  function resizeFormIsValid() {
-    if (resizeForm['resize-x'].value === '') {
-      resizeForm['resize-x'].value = 0;
-    }
-    if (resizeForm['resize-y'].value === '') {
-      resizeForm['resize-y'].value = 0;
-    }
-    if (resizeForm['resize-size'].value === '') {
-      resizeForm['resize-size'].value = 0;
-    }
-
-    var resizeX = parseInt(resizeForm['resize-x'].value, 10);
-    var resizeY = parseInt(resizeForm['resize-y'].value, 10);
-    var resizeSize = parseInt(resizeForm['resize-size'].value, 10);
-
-    var isXSideLargeThenNaturalWidth = resizeX + resizeSize < currentResizer._image.naturalWidth;
-    var isYSideLargeThenNaturalHeight = resizeY + resizeSize < currentResizer._image.naturalHeight;
-    var isTopAndLeftPositive = resizeX < 0 || resizeY < 0 || resizeSize < 0;
-
-    if (isXSideLargeThenNaturalWidth && isYSideLargeThenNaturalHeight && isTopAndLeftPositive) {
-      resizeForm['resize-fwd'].disabled = true;
-      return false;
-    } else {
-      resizeForm['resize-fwd'].disabled = false;
-      return true;
-    }
-  }
-
 
 
   /**
@@ -113,6 +84,10 @@
    * @type {HTMLFormElement}
    */
   var resizeForm = document.forms['upload-resize'];
+  // Берем данные из формы
+  var resizeX = resizeForm['resize-x'];
+  var resizeY = resizeForm['resize-y'];
+  var resizeSize = resizeForm['resize-size'];
 
   /**
    * Форма добавления фильтра.
@@ -129,6 +104,42 @@
    * @type {HTMLElement}
    */
   var uploadMessage = document.querySelector('.upload-message');
+
+
+  var checkValuesTimeout;
+
+  /**
+   * Большая сторона
+   */
+  function setMaxSide() {
+    resizeSize.max = Math.min((currentResizer._image.naturalWidth - resizeX.value), (currentResizer._image.naturalHeight - resizeY.value));
+    clearTimeout(checkValuesTimeout);
+    checkValuesTimeout = setTimeout(function() {
+      resizeFormIsValid();
+    }, 100);
+  }
+
+  resizeSize.min = 1;
+
+
+  /**
+   * Проверяет, валидны ли данные, в форме кадрирования.
+   * @returns {boolean}
+   */
+  function resizeFormIsValid() {
+
+    var isXSideLargeThenNaturalWidth = +resizeX.value + +resizeSize.value < currentResizer._image.naturalWidth;
+    var isYSideLargeThenNaturalHeight = +resizeY.value + +resizeSize.value < currentResizer._image.naturalHeight;
+    var isTopAndLeftPositive = +resizeX.value < 0 || +resizeY.value < 0 || +resizeSize.value < 0;
+
+    if (isXSideLargeThenNaturalWidth && isYSideLargeThenNaturalHeight && isTopAndLeftPositive) {
+      resizeForm['resize-fwd'].disabled = true;
+      return false;
+    } else {
+      resizeForm['resize-fwd'].disabled = false;
+      return true;
+    }
+  }
 
 
   /**
@@ -196,6 +207,9 @@
           resizeForm.classList.remove('invisible');
 
           hideMessage();
+          setMaxSide();
+          setTimeout(setResizeValues, 1);
+
         };
 
         fileReader.readAsDataURL(element.files[0]);
@@ -204,6 +218,49 @@
         // поддерживаемым изображением.
         showMessage(Action.ERROR);
       }
+    }
+  });
+
+  function setResizeValues() {
+    var baseSize = currentResizer.getConstraint();
+    resizeX.value = Math.ceil(baseSize.x);
+    resizeY.value = Math.ceil(baseSize.y);
+    resizeSize.value = Math.ceil(baseSize.side);
+  }
+
+
+  resizeX.addEventListener('change', function() {
+    currentResizer.moveConstraint(+resizeX.value, +resizeY.value, +resizeSize.value);
+    setMaxSide();
+  });
+
+  resizeY.addEventListener('change', function() {
+    currentResizer.moveConstraint(+resizeX.value, +resizeY.value, +resizeSize.value);
+    setMaxSide();
+  });
+
+  resizeSize.addEventListener('change', function() {
+    currentResizer.moveConstraint(+resizeX.value, +resizeY.value, +resizeSize.value);
+    setMaxSide();
+  });
+
+  /**
+  * Обработчик берущий значения смещения и размера кадра из объекта resizer для добавления их в форму
+  * @param {Event} resizerchange
+  */
+  window.addEventListener('resizerchange', function() {
+    setResizeValues();
+    setMaxSide();
+  });
+
+  /**
+  * Синхронизация изменения значений полей resizeForm
+  * и валидация формы.
+  * @param {Event} change
+  */
+  resizeForm.addEventListener('change', function() {
+    if (resizeFormIsValid()) {
+      currentResizer.setConstraint(+resizeX.value, +resizeY.value, +resizeSize.value);
     }
   });
 
