@@ -70,9 +70,7 @@
     });
   }
 
-  window.addEventListener('load', function() {
-   addPicturesPage()
-  });
+  window.addEventListener('load', addPicturesPage);
 
   window.addEventListener('resize', addPicturesPage);
 
@@ -107,6 +105,7 @@
   /**
    * Установка выбранного фильтра
    * @param {string} id
+   * @param {boolean} force
    */
   function setActiveFilter(id, force) {
 
