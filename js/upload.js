@@ -105,8 +105,17 @@
    */
   var uploadMessage = document.querySelector('.upload-message');
 
-
+  /**
+   * Таймаут для проверки значения в форме
+   * @type {function}
+   */
   var checkValuesTimeout;
+
+  /**
+   * Значение таймаута проверки значений в форме
+   * @type {const}
+   */
+  var FORM_CHECK_TIMEOUT = 100;
 
   /**
    * Большая сторона
@@ -116,7 +125,7 @@
     clearTimeout(checkValuesTimeout);
     checkValuesTimeout = setTimeout(function() {
       resizeFormIsValid();
-    }, 100);
+    }, FORM_CHECK_TIMEOUT);
   }
 
   resizeSize.min = 1;
@@ -228,21 +237,20 @@
     resizeSize.value = Math.ceil(baseSize.side);
   }
 
-
-  resizeX.addEventListener('change', function() {
+  /**
+   * Передаетв объект resizer значения для метода moveConstraint
+   */
+  function setConstraitMoveValues() {
     currentResizer.moveConstraint(+resizeX.value, +resizeY.value, +resizeSize.value);
     setMaxSide();
-  });
+  }
 
-  resizeY.addEventListener('change', function() {
-    currentResizer.moveConstraint(+resizeX.value, +resizeY.value, +resizeSize.value);
-    setMaxSide();
-  });
 
-  resizeSize.addEventListener('change', function() {
-    currentResizer.moveConstraint(+resizeX.value, +resizeY.value, +resizeSize.value);
-    setMaxSide();
-  });
+  resizeX.addEventListener('change', setConstraitMoveValues);
+
+  resizeY.addEventListener('change', setConstraitMoveValues);
+
+  resizeSize.addEventListener('change', setConstraitMoveValues);
 
   /**
   * Обработчик берущий значения смещения и размера кадра из объекта resizer для добавления их в форму
