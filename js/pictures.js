@@ -1,3 +1,4 @@
+/* global Photo: true */
 
 /**
  * @fileoverview
@@ -15,8 +16,7 @@
 
 
   var DEFAULT_FILTER = 'filter-popular';
-  var ELEMENT_IMAGE_WIDTH = 182;
-  var ELEMENT_IMAGE_HEIGHT = 182;
+  var IMAGE_SIDE = 182;
   var IMAGE_LOAD_TIMEOUT = 10000;
   var PAGE_SIZE = 12;
 
@@ -25,6 +25,14 @@
   var scrollTimeout;
 
   filtersContainer.classList.remove('hidden');
+
+  /**
+   * Нужно ли догружать картинки
+   * @returns {boolean}
+   */
+  function loadedNextPage() {
+    return ((picturesContainer.getBoundingClientRect().bottom - IMAGE_SIDE <= window.innerHeight) && (currentPage < Math.ceil(filteredPictures.length / PAGE_SIZE)));
+  }
 
 
 
@@ -38,7 +46,10 @@
 
     // Обнулим контейнер если требуется
     if (replace) {
-      picturesContainer.innerHTML = '';
+      Array.prototype.forEach.call( picturesContainer, function(node) {
+        picturesContainer.removeChild(node);
+      });
+      //picturesContainer.innerHTML = '';
     }
 
     var fragment = document.createDocumentFragment();
@@ -49,8 +60,9 @@
     var pagePictures = picturesToRender.slice(renderFrom, renderTo);
 
     pagePictures.forEach(function(picture) {
-      var element = getElementFromTemplate(picture);
-      fragment.appendChild(element);
+      var photoItem = new Photo(picture);
+      photoItem.render();
+      fragment.appendChild(photoItem.element);
     });
 
     picturesContainer.appendChild(fragment);
@@ -78,11 +90,11 @@
     clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(function() {
       console.log('scroll');
-      addPicturesPage();
+      while (loadedNextPage()) {
+        addPicturesPage();
+      }
     }, 100);
-    if (window.innerHeight <= document.body.offsetHeight) {
-      addPicturesPage();
-    }
+
 
   });
 
@@ -173,52 +185,6 @@
     };
 
     XHRequest.send();
-  }
-
-
-
-
-
-  /**
-   * Создаем новый DOM элемент на основе шаблона
-   * @param {Object} data
-   * @return {Element}
-   */
-  function getElementFromTemplate(data) {
-    var templateSelector = 'picture-template';
-    var template = document.getElementById(templateSelector);
-    var element;
-    var elementImage = new Image(ELEMENT_IMAGE_WIDTH, ELEMENT_IMAGE_HEIGHT);
-
-    if ('content' in template) {
-      element = template.content.childNodes[1].cloneNode(true);
-    } else {
-      element = template.childNodes[1].cloneNode(true);
-    }
-    var templateImage = element.querySelector('img');
-
-    elementImage.src = data.url;
-
-
-    var loadErrorTimeout = setTimeout(function() {
-      element.classList.add('picture-load-failure');
-    }, IMAGE_LOAD_TIMEOUT);
-
-    elementImage.onload = function() {
-      element.replaceChild(elementImage, templateImage);
-      clearTimeout(loadErrorTimeout);
-    };
-    elementImage.onerror = function() {
-      element.classList.add('picture-load-failure');
-      console.log(data.url + ' not loaded');
-    };
-
-
-
-    element.querySelector('.picture-comments').textContent = data.comments;
-    element.querySelector('.picture-likes').textContent = data.likes;
-
-    return element;
   }
 
 
