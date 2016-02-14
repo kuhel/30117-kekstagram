@@ -70,7 +70,9 @@
     });
   }
 
-  window.addEventListener('load', addPicturesPage);
+  window.addEventListener('load', function() {
+   addPicturesPage()
+  });
 
   window.addEventListener('resize', addPicturesPage);
 
@@ -80,6 +82,9 @@
       console.log('scroll');
       addPicturesPage();
     }, 100);
+    if (window.innerHeight <= document.body.offsetHeight) {
+      addPicturesPage();
+    }
 
   });
 
@@ -90,6 +95,7 @@
     if (picturesContainerCoordinates.bottom - viewportSize <= picturesContainerCoordinates.height) {
       if (currentPage < Math.ceil(filteredPictures.length / PAGE_SIZE)) {
         renderPictures(filteredPictures, ++currentPage);
+        console.log('Page  #' + currentPage + ' rendered');
       }
     }
   }
