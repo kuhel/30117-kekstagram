@@ -12,7 +12,6 @@
   var filteredPictures = [];
   var picturesContainer = document.querySelector('.pictures');
   var filtersContainer = document.querySelector('.filters');
-  var filters = document.querySelectorAll('.filters-radio');
 
 
   var DEFAULT_FILTER = 'filter-popular';
