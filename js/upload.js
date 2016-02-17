@@ -297,7 +297,6 @@
 
     if (resizeFormIsValid()) {
       filterImage.src = currentResizer.exportImage().src;
-
       resizeForm.classList.add('invisible');
       filterForm.classList.remove('invisible');
     }
