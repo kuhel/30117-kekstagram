@@ -46,8 +46,11 @@
 
     // Обнулим контейнер если требуется
     if (replace) {
-      Array.prototype.forEach.call( picturesContainer, function(node) {
+      var b = 0;
+      Array.prototype.forEach.call( picturesContainer.children, function(node) {
         picturesContainer.removeChild(node);
+
+        console.log('Deleted children nodes: ' + b++);
       });
       //picturesContainer.innerHTML = '';
     }
