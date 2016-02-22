@@ -1,4 +1,4 @@
-/* global Photo: true */
+/* global Photo: true, Gallery: true */
 
 /**
  * @fileoverview
@@ -23,6 +23,8 @@
   var activeFilter = '';
   var currentPage = 0;
   var scrollTimeout;
+
+  var gallery = new Gallery();
 
   filtersContainer.classList.remove('hidden');
 
@@ -63,9 +65,21 @@
       var photoItem = new Photo(picture);
       photoItem.render();
       fragment.appendChild(photoItem.element);
+
+      // Вешаем обработчик клика для показа галереи
+      photoItem.element.addEventListener('click', _onPhotoClick);
     });
 
     picturesContainer.appendChild(fragment);
+  }
+
+  /**
+   * Обраюотка клика по фотографии
+   * @param {Event} evt
+   */
+  function _onPhotoClick(evt) {
+    evt.preventDefault();
+    gallery.show();
   }
 
   /**
