@@ -54,7 +54,6 @@
       while ((el = renderedPictures.shift())) {
         picturesContainer.removeChild(el.element);
         el.onClick = null;
-        el.remove();
       }
     }
 
