@@ -18,7 +18,6 @@
   inherit(Photo, PhotoBase);
 
   Photo.prototype.render = function() {
-
     var ELEMENT_IMAGE_WIDTH = 182;
     var ELEMENT_IMAGE_HEIGHT = 182;
     var IMAGE_LOAD_TIMEOUT = 10000;
