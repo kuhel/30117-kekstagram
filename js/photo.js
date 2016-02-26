@@ -11,9 +11,6 @@
 
   function Photo(data) {
     this._data = data;
-    this.ELEMENT_IMAGE_WIDTH = 182;
-    this.ELEMENT_IMAGE_HEIGHT = 182;
-    this.IMAGE_LOAD_TIMEOUT = 10000;
 
     this.onPhotoClick = this.onPhotoClick.bind(this);
   }
@@ -22,9 +19,13 @@
 
   Photo.prototype.render = function() {
 
+    var ELEMENT_IMAGE_WIDTH = 182;
+    var ELEMENT_IMAGE_HEIGHT = 182;
+    var IMAGE_LOAD_TIMEOUT = 10000;
+
     var templateSelector = 'picture-template';
     var template = document.getElementById(templateSelector);
-    var elementImage = new Image(this.ELEMENT_IMAGE_WIDTH, this.ELEMENT_IMAGE_HEIGHT);
+    var elementImage = new Image(ELEMENT_IMAGE_WIDTH, ELEMENT_IMAGE_HEIGHT);
     if ('content' in template) {
       this.element = template.content.childNodes[1].cloneNode(true);
     } else {
@@ -32,10 +33,6 @@
     }
     var templateImage = this.element.querySelector('img');
     var loadErrorTimeout;
-
-    //var loadErrorTimeout = setTimeout(function() {
-    //  this.element.classList.add('picture-load-failure').bind(this);
-    //}, this.IMAGE_LOAD_TIMEOUT);
 
     elementImage.addEventListener('load', function() {
       clearTimeout(loadErrorTimeout);
@@ -55,7 +52,7 @@
     loadErrorTimeout = setTimeout(function() {
       elementImage.src = '';
       this.element.classList.add('picture-load-failure');
-    }.bind(this), this.IMAGE_LOAD_TIMEOUT);
+    }.bind(this), IMAGE_LOAD_TIMEOUT);
 
     this.element.querySelector('.picture-comments').textContent = this._data.comments;
     this.element.querySelector('.picture-likes').textContent = this._data.likes;
