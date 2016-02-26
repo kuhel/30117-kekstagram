@@ -11,6 +11,7 @@
 (function() {
   var pictures = [];
   var filteredPictures = [];
+  var renderedPictures = [];
   var picturesContainer = document.querySelector('.pictures');
   var filtersContainer = document.querySelector('.filters');
 
@@ -48,10 +49,12 @@
 
     // Обнулим контейнер если требуется
     if (replace) {
-      Array.prototype.forEach.call( picturesContainer, function(node) {
-        picturesContainer.removeChild(node);
-      });
-      //picturesContainer.innerHTML = '';
+      currentPage = 0;
+      var el;
+      while ((el = renderedPictures.shift())) {
+        picturesContainer.removeChild(el.element);
+        el.onClick = null;
+      }
     }
 
     var fragment = document.createDocumentFragment();
@@ -61,26 +64,30 @@
     var renderTo = renderFrom + PAGE_SIZE;
     var pagePictures = picturesToRender.slice(renderFrom, renderTo);
 
-    pagePictures.forEach(function(picture) {
-      var photoItem = new Photo(picture);
-      photoItem.render();
-      fragment.appendChild(photoItem.element);
+    renderedPictures = renderedPictures.concat(pagePictures.map(function(picture) {
 
-      // Вешаем обработчик клика для показа галереи
-      photoItem.element.addEventListener('click', _onPhotoClick);
-    });
+      var elementPicture = new Photo(picture);
+      elementPicture.setData(picture);
+      elementPicture.render();
+      fragment.appendChild(elementPicture.element);
+      elementPicture.onClick = function() {
+        gallery.setData(elementPicture.getData());
+        gallery.render();
+      };
+      return elementPicture;
+    }));
 
     picturesContainer.appendChild(fragment);
   }
 
-  /**
-   * Обраюотка клика по фотографии
-   * @param {Event} evt
-   */
-  function _onPhotoClick(evt) {
-    evt.preventDefault();
-    gallery.show();
-  }
+  ///**
+  // * Обраюотка клика по фотографии
+  // * @param {Event} evt
+  // */
+  //function _onPhotoClick(evt) {
+  //  evt.preventDefault();
+  //  gallery.show();
+  //}
 
   /**
    * Установка фильтрации
@@ -178,6 +185,7 @@
     }
 
     renderPictures(filteredPictures, 0, true);
+    gallery.setPictures(filteredPictures);
 
   }
 
@@ -191,12 +199,13 @@
     XHRequest.open('GET', 'http://o0.github.io/assets/json/pictures.json');
     XHRequest.timeout = IMAGE_LOAD_TIMEOUT;
     document.querySelector('.pictures').classList.add('pictures-loading');
-    XHRequest.onload = function(event) {
+
+    XHRequest.addEventListener('load', function(event) {
       var rawData = event.target.response;
       pictures = JSON.parse(rawData);
       document.querySelector('.pictures').classList.remove('pictures-loading');
       setActiveFilter(DEFAULT_FILTER, true);
-    };
+    });
 
     XHRequest.send();
   }
