@@ -15,12 +15,19 @@ define(function() {
     this.element = document.querySelector('.gallery-overlay');
     this.elementImage = document.querySelector('.gallery-overlay-image');
     this.elementLikes = document.querySelector('.gallery-overlay-controls-like');
+    this.elementLikesCount = document.querySelector('.likes-count');
     this.elementComments = document.querySelector('.gallery-overlay-controls-comments');
     this._closeButton = document.querySelector('.gallery-overlay-close');
     this.currentPicture = 0;
+    this.KeyCodes = {
+      ESC: 27,
+      LEFT_ARROW: 37,
+      RIGHT_ARROW: 39
+    };
     this._onCloseClick = this._onCloseClick.bind(this);
     this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
     this._onPhotoClick = this._onPhotoClick.bind(this);
+    this._onLikeClick = this._onLikeClick.bind(this);
   };
 
   /**
@@ -43,6 +50,9 @@ define(function() {
     // Клик по фото
     this.elementImage.addEventListener('click', this._onPhotoClick);
 
+    // Клик по Лайку
+    this.elementLikes.addEventListener('click', this._onLikeClick);
+
     // Слушаем Esc
     document.addEventListener('keydown', this._onDocumentKeyDown);
 
@@ -61,6 +71,9 @@ define(function() {
     // Убираем клик по фото
     this.elementImage.removeEventListener('click', this._onPhotoClick);
 
+    // Убираем клик по лайку
+    this.elementLikes.removeEventListener('click', this._onLikeClick);
+
     // Убираем прослушку Esc
     document.removeEventListener('keydown', this._onDocumentKeyDown);
   };
@@ -78,10 +91,17 @@ define(function() {
    * @param {Number} pictureIndex
    */
   Gallery.prototype.setCurrentPicture = function(pictureIndex) {
+    var currentPicture = this.pictures[pictureIndex];
 
-    this.elementImage.src = this.pictures[pictureIndex].url;
-    this.elementLikes.querySelector('.likes-count').innerText = this.pictures[pictureIndex].likes;
-    this.elementComments.querySelector('.comments-count').innerText = this.pictures[pictureIndex].comments;
+    this.elementImage.src = currentPicture.url;
+    this.elementLikes.querySelector('.likes-count').innerText = currentPicture.likes;
+    this.elementComments.querySelector('.comments-count').innerText = currentPicture.comments;
+
+    if (currentPicture.alreadyLiked === true) {
+      this.elementLikesCount.classList.add('likes-count-liked');
+    } else {
+      this.elementLikesCount.classList.remove('likes-count-liked');
+     }
   };
 
   /**
@@ -94,6 +114,7 @@ define(function() {
 
   /**
    * Получаем индекс картинки
+   * @return {number} i
    */
   Gallery.prototype.getNumberPicture = function(url) {
     for (var i = 0; i < this.pictures.length; i++) {
@@ -134,7 +155,7 @@ define(function() {
   };
 
   /**
-   * Обработка клика по картинке в галереи
+   * Обработка клика по картинке в галерее
    * @Private
    */
   Gallery.prototype._onPhotoClick = function() {
@@ -143,25 +164,44 @@ define(function() {
   };
 
   /**
+   * Обработка клика по лайку в галерее
+   * @Private
+   */
+  Gallery.prototype._onLikeClick = function() {
+
+    var pictureToLike = this.pictures[this.currentPicture];
+    debugger;
+    if (!pictureToLike.alreadyLiked === true) {
+      this.elementLikesCount.classList.add('likes-count-liked');
+      pictureToLike.likes++;
+      this.elementLikesCount.innerHTML = pictureToLike.likes;
+      pictureToLike.alreadyLiked = true;
+    } else {
+      this.elementLikesCount.classList.remove('likes-count-liked');
+      pictureToLike.likes--;
+      this.elementLikesCount.innerHTML = pictureToLike.likes;
+      this.pictureToLike.alreadyLiked = false;
+    }
+  };
+
+  /**
    * Обработка нажатия клавиши Esc
-   * @private
-   *
+   * @Private
+   * @param {Event} evt
    */
   Gallery.prototype._onDocumentKeyDown = function(evt) {
-    if (evt.keyCode === 27) {
+    if (evt.keyCode === this.KeyCodes.ESC) {
       this.hide();
     }
-    if (evt.keyCode === 37) {
+    if (evt.keyCode === this.KeyCodes.LEFT_ARROW) {
       this.setPreviousPicture();
     }
-    if (evt.keyCode === 39) {
+    if (evt.keyCode === this.KeyCodes.RIGHT_ARROW) {
       this.setNextPicture();
     }
     this.setCurrentPicture(this.currentPicture);
   };
 
-
-  //TODO likePicture
 
   return Gallery;
 });

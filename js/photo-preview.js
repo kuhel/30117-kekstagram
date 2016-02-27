@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @fileoverview Наследуем в объект PhotoPreview методы и свойства объекта PhotoBase
  * @author Gleb Vorontsov
  */
 

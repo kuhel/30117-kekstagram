@@ -12,7 +12,7 @@ define(
 
     /** Типизированный объект Фото
      * @param {Object} data
-     * @constractor
+     * @constructor
      */
     function Photo(data) {
       this._data = data;
@@ -22,6 +22,10 @@ define(
 
     inherit(Photo, PhotoBase);
 
+
+    /**
+     * Рендер одной картинки
+     */
     Photo.prototype.render = function() {
       var ELEMENT_IMAGE_WIDTH = 182;
       var ELEMENT_IMAGE_HEIGHT = 182;
@@ -63,6 +67,9 @@ define(
 
     };
 
+    /**
+     * Обработчик клика по картинке
+     */
     Photo.prototype.onPhotoClick = function(evt) {
       evt.preventDefault();
       if (this.element.classList.contains('picture') && !this.element.classList.contains('picture-load-failure')) {

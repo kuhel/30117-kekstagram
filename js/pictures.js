@@ -21,8 +21,9 @@ define([
     var IMAGE_SIDE = 182;
     var IMAGE_LOAD_TIMEOUT = 10000;
     var PAGE_SIZE = 12;
+    var SCROLL_TIMEOUT = 100;
 
-    var activeFilter = '';
+    var activeFilter = localStorage.getItem('picturesFilter') || DEFAULT_FILTER;
     var currentPage = 0;
     var scrollTimeout;
 
@@ -81,14 +82,14 @@ define([
       picturesContainer.appendChild(fragment);
     }
 
-    ///**
-    // * Обраюотка клика по фотографии
-    // * @param {Event} evt
-    // */
-    //function _onPhotoClick(evt) {
-    //  evt.preventDefault();
-    //  gallery.show();
-    //}
+    /**
+     * Записываем информацию о фильтре в localStorage
+     * @param {String} id
+     */
+    function setLocalStorageFilter(id) {
+      localStorage.setItem('picturesFilter', id);
+    }
+
 
     /**
      * Установка фильтрации
@@ -100,6 +101,7 @@ define([
         var clickedElement = evt.target;
         if (clickedElement.classList.contains('filters-radio')) {
           setActiveFilter(clickedElement.id);
+          setLocalStorageFilter(clickedElement.id);
         }
       });
     }
@@ -115,11 +117,15 @@ define([
         while (loadedNextPage()) {
           addPicturesPage();
         }
-      }, 100);
+      }, SCROLL_TIMEOUT);
 
 
     });
 
+    /**
+     * Добавляем секцию с картинками в контейнер картинок
+     *
+     */
     function addPicturesPage() {
       var picturesContainerCoordinates = document.querySelector('.pictures').getBoundingClientRect();
       var viewportSize = window.innerHeight;
@@ -146,8 +152,6 @@ define([
 
       if ( activeFilter === id && !force) {
         return;
-      } else if (activeFilter === '') {
-        activeFilter = DEFAULT_FILTER;
       }
 
       activeFilter = id;
@@ -205,7 +209,7 @@ define([
         var rawData = event.target.response;
         pictures = JSON.parse(rawData);
         document.querySelector('.pictures').classList.remove('pictures-loading');
-        setActiveFilter(DEFAULT_FILTER, true);
+        setActiveFilter(activeFilter, true);
       });
 
       XHRequest.send();
