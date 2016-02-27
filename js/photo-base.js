@@ -37,5 +37,5 @@ define(function() {
     return this._data;
   };
 
-  return PhotoBase
+  return PhotoBase;
 });

@@ -8,7 +8,7 @@
 define([
   'inherit',
   'photo-base'],
-  function() {
+  function(inherit, PhotoBase) {
     function PhotoPreview() {}
     inherit(PhotoPreview, PhotoBase);
   });
