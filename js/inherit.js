@@ -5,16 +5,19 @@
 
 'use strict';
 
+define(function() {
 
-/**
- * Пишем в прототип наследник методы и свойтсва родительского конструктора
- * через пустой конструктор
- * @param {Function} child
- * @param {Function} parent
- */
-window.inherit = function(child, parent) {
-  var EmptyConstructor = function() {};
+  /**
+   * Наследование одного объекта от другого
+   * @param {Function} child
+   * @param {Function} parent
+   */
+  function inherit(child, parent) {
+    var EmptyConstructor = function() {};
+    EmptyConstructor.prototype = parent.prototype;
+    child.prototype = new EmptyConstructor();
+  }
 
-  EmptyConstructor.prototype = parent.prototype;
-  child.prototype = new EmptyConstructor();
-};
+  return inherit;
+});
+

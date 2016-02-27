@@ -1,16 +1,32 @@
+/**
+ * @fileoverview
+ * @author Gleb Vorontsov
+ */
+
+'use strict';
+
+/**
+ * Анализ входного изображения при загрузке
+ * @param {Function} child
+ * @param {Function} parent
+ * @returns {string} message – строка с сообщением
+ */
+
 function getMessage(a, b) {
+
+  var message = '';
 
   if ( typeof(a) == 'boolean' ) {
     if (a) {
-      return 'Переданное GIF-изображение анимировано и содержит ' + b + ' кадров';
+      message = 'Переданное GIF-изображение анимировано и содержит ' + b + ' кадров';
     }
     else {
-      return 'Переданное GIF-изображение не анимировано';
+      message = 'Переданное GIF-изображение не анимировано';
     }
   }
 
   if (typeof(a) == 'number') {
-    return 'Переданное SVG-изображение содержит ' + a + ' объектов и ' + b * 4 +' аттрибутов';
+    message =  'Переданное SVG-изображение содержит ' + a + ' объектов и ' + b * 4 +' аттрибутов';
   }
 
   if (Array.isArray(a)) {
@@ -18,7 +34,7 @@ function getMessage(a, b) {
     for (var i = 0; i < a.length; i++ ) {
       sum += a[i];
     }
-    return 'Количество красных точек во всех строчках изображения: ' + sum;
+    message = 'Количество красных точек во всех строчках изображения: ' + sum;
   }
 
   if ( Array.isArray(a) && Array.isArray(b) ) {
@@ -36,6 +52,8 @@ function getMessage(a, b) {
       square += a[i] * b[i];
     }
 
-    return 'Общая площадь артефактов сжатия: ' + square + 'пикселей';
+    message = 'Общая площадь артефактов сжатия: ' + square + 'пикселей';
   }
+
+  return message;
 }

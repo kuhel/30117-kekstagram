@@ -5,7 +5,7 @@
 
 'use strict';
 
-(function() {
+define(function() {
 
 
   /**
@@ -163,5 +163,5 @@
 
   //TODO likePicture
 
-  window.Gallery = Gallery;
-})();
+  return Gallery;
+});

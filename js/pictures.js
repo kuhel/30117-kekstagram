@@ -1,5 +1,3 @@
-/* global Photo: true, Gallery: true */
-
 /**
  * @fileoverview
  * @author Gleb Vorontsov
@@ -8,7 +6,10 @@
 'use strict';
 
 
-(function() {
+define([
+  'photo',
+  'gallery'],
+  function(Photo, Gallery) {
   var pictures = [];
   var filteredPictures = [];
   var renderedPictures = [];
@@ -212,4 +213,4 @@
 
 
 
-})();
+});

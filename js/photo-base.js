@@ -5,7 +5,7 @@
 
 'use strict';
 
-(function() {
+define(function() {
 
   function PhotoBase() {}
 
@@ -37,5 +37,5 @@
     return this._data;
   };
 
-  window.PhotoBase = PhotoBase;
-})();
+  return PhotoBase
+});

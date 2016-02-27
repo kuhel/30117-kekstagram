@@ -1,14 +1,13 @@
-/* global Resizer: true */
-/* global docCookies: true */
-
 /**
  * @fileoverview
- * @author Igor Alexeenko (o0)
+ * @author Igor Alexeenko (o0), Gleb Vorontsov
  */
 
 'use strict';
 
-(function() {
+define([
+  'resizer'],
+  function(Resizer) {
   /** @enum {string} */
   var FileType = {
     'GIF': '',
@@ -359,7 +358,7 @@
     var BIRTHDAY_DATE = '13/11';
     var cookieExpires = cookieExpireDateByBirthday(BIRTHDAY_DATE);
     var filterName = (filterImage.classList[1]) ? filterImage.classList[1] : 'no-filter';
-    docCookies.setItem('filter', filterName, cookieExpires);
+    window.docCookies.setItem('filter', filterName, cookieExpires);
 
     filterForm.classList.add('invisible');
     uploadForm.classList.remove('invisible');
@@ -396,7 +395,7 @@
    *
    */
   function getLastFilter() {
-    var lastFilter = docCookies.getItem('filter');
+    var lastFilter = window.docCookies.getItem('filter');
     if (lastFilter) {
       filterImage.className = 'filter-image-preview ' + lastFilter;
       filterForm['upload-' + lastFilter].setAttribute('checked', 'checked');
@@ -409,4 +408,4 @@
 
   cleanupResizer();
   updateBackground();
-})();
+});

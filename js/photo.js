@@ -1,8 +1,14 @@
-/* global inherit: true, PhotoBase: true */
+/**
+ * @fileoverview
+ * @author Gleb Vorontsov
+ */
 
 'use strict';
 
-(function() {
+define(
+  ['inherit',
+  'photo-base'],
+  function(inherit, PhotoBase) {
 
   /** Типизированный объект Фото
    * @param {Object} data
@@ -67,6 +73,6 @@
     }
   };
 
-  window.Photo = Photo;
+  return Photo;
 
-})();
+});
