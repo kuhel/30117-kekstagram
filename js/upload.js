@@ -112,7 +112,8 @@ define([
 
     /**
      * Значение таймаута проверки значений в форме
-     * @type {const}
+     * @type {number}
+     * @const
      */
     var FORM_CHECK_TIMEOUT = 100;
 

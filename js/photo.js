@@ -10,6 +10,27 @@ define(
   'photo-base'],
   function(inherit, PhotoBase) {
 
+    /**
+     * Ширина картинки
+     * @type {number}
+     * @const
+     */
+    var ELEMENT_IMAGE_WIDTH = 182;
+
+    /**
+     * Высота картинки
+     * @type {number}
+     * @const
+     */
+    var ELEMENT_IMAGE_HEIGHT = 182;
+
+    /**
+     * Таймаут загрузки картинки
+     * @type {number}
+     * @const
+     */
+    var IMAGE_LOAD_TIMEOUT = 10000;
+
     /** Типизированный объект Фото
      * @param {Object} data
      * @constructor
@@ -27,9 +48,7 @@ define(
      * Рендер одной картинки
      */
     Photo.prototype.render = function() {
-      var ELEMENT_IMAGE_WIDTH = 182;
-      var ELEMENT_IMAGE_HEIGHT = 182;
-      var IMAGE_LOAD_TIMEOUT = 10000;
+
 
       var templateSelector = 'picture-template';
       var template = document.getElementById(templateSelector);
@@ -49,7 +68,6 @@ define(
       }.bind(this));
       elementImage.addEventListener('error', function() {
         this.element.classList.add('picture-load-failure');
-        console.log(this._data.url + ' not loaded');
       }.bind(this));
 
       this.element.addEventListener('click', this.onPhotoClick);

@@ -219,7 +219,6 @@ define([
     window.addEventListener('scroll', function() {
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(function() {
-        console.log('scroll');
         while (loadedNextPage()) {
           addPicturesPage();
         }
@@ -239,7 +238,6 @@ define([
       if (picturesContainerCoordinates.bottom - viewportSize <= picturesContainerCoordinates.height) {
         if (currentPage < Math.ceil(filteredPictures.length / PAGE_SIZE)) {
           renderPictures(filteredPictures, ++currentPage, false);
-          console.log('Page  #' + currentPage + ' rendered');
         }
       }
     }

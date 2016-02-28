@@ -212,6 +212,11 @@ define(function() {
     }
   };
 
+  Gallery.prototype.hideGalleryWithHash = function() {
+    this.hide();
+    this.setHash('');
+  };
+
 
 
   /**
@@ -219,8 +224,7 @@ define(function() {
    * @Private
    */
   Gallery.prototype._onCloseClick = function() {
-    this.hide();
-    this.setHash('');
+    this.hideGalleryWithHash();
   };
 
   /**
@@ -259,8 +263,7 @@ define(function() {
    */
   Gallery.prototype._onDocumentKeyDown = function(evt) {
     if (evt.keyCode === this.KeyCodes.ESC) {
-      this.hide();
-      this.setHash('');
+      this.hideGalleryWithHash();
     }
     if (evt.keyCode === this.KeyCodes.LEFT_ARROW) {
       this.setPreviousPicture();
