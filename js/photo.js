@@ -40,6 +40,8 @@ define(
       this.onPhotoClick = this.onPhotoClick.bind(this);
     }
 
+    inherit(Photo, PhotoBase);
+
     /**
      * Рендер одной картинки
      */
