@@ -9,6 +9,10 @@ define(function() {
 
   function PhotoBase() {}
 
+  /**
+   * Данные о картинках
+   * @type {Object}
+   */
   PhotoBase.prototype._data = null;
 
   /**
@@ -31,7 +35,7 @@ define(function() {
 
   /**
    * Выдача данных
-   * @param {Object} data
+   * @return {Object} _data
    */
   PhotoBase.prototype.getData = function() {
     return this._data;

@@ -1,22 +1,33 @@
 'use strict';
 
 define(function() {
-  
+
   /**
    * @constructor
    * @param {string} image
    */
   var Resizer = function(image) {
-    // Изображение, с которым будет вестись работа.
+
+    /**
+     * Изображение, с которым будет вестись работа.
+     * @type {Image}
+     * @private
+     */
     this._image = new Image();
     this._image.src = image;
 
-    // Холст.
+    //
+    /**
+     * Холст.
+     * @type {HTMLElement}
+     */
     this._container = document.createElement('canvas');
     this._ctx = this._container.getContext('2d');
 
-    // Создаем холст только после загрузки изображения.
-    this._image.onload = function() {
+    /**
+     * Создаем холст только после загрузки изображения.
+     */
+    this._image.addEventListener('load', function() {
       // Размер холста равен размеру загруженного изображения. Это нужно
       // для удобства работы с координатами.
       this._container.width = this._image.naturalWidth;
@@ -29,23 +40,35 @@ define(function() {
        * @type {number}
        */
       var INITIAL_SIDE_RATIO = 0.75;
-      // Размер меньшей стороны изображения.
+
+      /**
+       * Размер меньшей стороны изображения.
+       * @type {number}
+       */
       var side = Math.min(
         this._container.width * INITIAL_SIDE_RATIO,
         this._container.height * INITIAL_SIDE_RATIO);
 
-      // Изначально предлагаемое кадрирование — часть по центру с размером в 3/4
-      // от размера меньшей стороны.
+
+      /**
+       * Изначально предлагаемое кадрирование — часть по центру с размером в 3/4
+       * от размера меньшей стороны.
+       * @type {Square}
+       */
       this._resizeConstraint = new Square(
         this._container.width / 2 - side / 2,
         this._container.height / 2 - side / 2,
         side);
 
-      // Отрисовка изначального состояния канваса.
+      /**
+       * Отрисовка изначального состояния канваса.
+       */
       this.redraw();
-    }.bind(this);
+    }).bind(this);
 
-    // Фиксирование контекста обработчиков.
+    /**
+     * Фиксирование контекста обработчиков.
+     */
     this._onDragStart = this._onDragStart.bind(this);
     this._onDragEnd = this._onDragEnd.bind(this);
     this._onDrag = this._onDrag.bind(this);

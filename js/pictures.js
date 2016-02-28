@@ -10,25 +10,99 @@ define([
   'photo',
   'gallery'],
   function(Photo, Gallery) {
+    /**
+     * Массив загруженных картинок
+     * @type {Array.<Object>}
+     */
     var pictures = [];
+
+    /**
+     * Массив остортированных по филтру картинок
+     * @type {Array.<Object>}
+     */
     var filteredPictures = [];
+
+    /**
+     * Массив отрисованных картинок
+     * @type {Array.<Object>}
+     */
     var renderedPictures = [];
+
+    /**
+     * Контейнер всех картинок
+     * @type {HTMLElement}
+     */
     var picturesContainer = document.querySelector('.pictures');
+
+    /**
+     * Контейнер инпутов фильтров
+     * @type {HTMLElement}
+     */
     var filtersContainer = document.querySelector('.filters');
 
-
+    /**
+     * Фильтр по умолчанию
+     * @type {string}
+     * @const
+     */
     var DEFAULT_FILTER = 'filter-popular';
+
+    /**
+     * Размер стороны картинки-превьюшки
+     * @type {number}
+     * @const
+     */
     var IMAGE_SIDE = 182;
+
+    /**
+     * Таймаут загрузки картинки с сервера
+     * @type {number}
+     * @const
+     */
     var IMAGE_LOAD_TIMEOUT = 10000;
+
+    /**
+     * Количество картинок выводящихся в одном блоке(странице)
+     * @type {number}
+     * @const
+     */
     var PAGE_SIZE = 12;
+
+    /**
+     * Таймаут троттла скролла
+     * @type {number}
+     * @const
+     */
     var SCROLL_TIMEOUT = 100;
 
+    /**
+     * Активный фильтр берется из localStorage, если там есть запись
+     * @type {string}
+     */
     var activeFilter = localStorage.getItem('picturesFilter') || DEFAULT_FILTER;
+
+    /**
+     * Текущий блок(страница) с картинками
+     * @type {number}
+     */
     var currentPage = 0;
+
+    /**
+     * Функция устанавливающая таймаут на скролл
+     * @type {function}
+     */
     var scrollTimeout;
 
+    /**
+     * Объект галереи
+     * @type {Gallery}
+     */
     var gallery = new Gallery();
 
+
+    /**
+     * Показываем контейнер с филтрами
+     */
     filtersContainer.classList.remove('hidden');
 
     /**
@@ -49,7 +123,9 @@ define([
      */
     function renderPictures(picturesToRender, pageNumber, replace) {
 
-      // Обнулим контейнер если требуется
+      /**
+       * Обнулим контейнер если требуется
+       */
       if (replace) {
         currentPage = 0;
         var el;
@@ -59,22 +135,43 @@ define([
         }
       }
 
+      /**
+       * Контейнер который наполнят картинками и добавят в DOM
+       * @type {HTMLElement}
+       */
       var fragment = document.createDocumentFragment();
 
-      // Отсортируем массив по количеству нужных картинко
+      /**
+       * С какой картинки отрисовываем блок с картинками
+       * @type {number}
+       */
       var renderFrom = pageNumber * PAGE_SIZE;
+
+      /**
+       * По какой элемент отрисовываем блок с картинками
+       * @type {number}
+       */
       var renderTo = renderFrom + PAGE_SIZE;
+
+      /**
+       * Массив картинок для отрисовки блока
+       * @type {Array.<Object>}
+       */
       var pagePictures = picturesToRender.slice(renderFrom, renderTo);
 
       renderedPictures = renderedPictures.concat(pagePictures.map(function(picture) {
 
+        /**
+         * Объект Photo
+         * @type {Photo}
+         */
         var elementPicture = new Photo(picture);
         elementPicture.setData(picture);
         elementPicture.render();
         fragment.appendChild(elementPicture.element);
         elementPicture.onClick = function() {
           gallery.setData(elementPicture.getData());
-          gallery.render();
+          gallery.setHash(picture.url);
         };
         return elementPicture;
       }));
@@ -106,10 +203,19 @@ define([
       });
     }
 
+    /**
+     * Слушаем загрузку и отрисовываем картинки
+     */
     window.addEventListener('load', addPicturesPage);
 
+    /**
+     * Слушаем изменение размеров окна и отрисовываем картинки
+     */
     window.addEventListener('resize', addPicturesPage);
 
+    /**
+     * Слушаем скролл и отрисовываем картинки
+     */
     window.addEventListener('scroll', function() {
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(function() {
@@ -138,7 +244,14 @@ define([
       }
     }
 
+    /**
+     * Загружаем картинки
+     */
     getPictures();
+
+    /**
+     * Устанавливаем сортировку
+     */
     setFilter();
 
 
@@ -157,7 +270,9 @@ define([
       activeFilter = id;
       currentPage = 0;
 
-      // Выставляем актвиный фильтр
+      /**
+       * Выставляем актвиный фильтр
+       */
       var selectedFilter = document.querySelector('#' + activeFilter);
       if (selectedFilter) {
         selectedFilter.setAttribute('checked', 'false');
@@ -213,6 +328,39 @@ define([
       });
 
       XHRequest.send();
+    }
+
+    /**
+     * Слушаем изменение хэша и рисуем галерею
+     */
+    window.addEventListener('hashchange', galleryByHash);
+
+    /**
+     * Слушаем загрузку и рисуем галерею
+     */
+    window.addEventListener('load', galleryByHash);
+
+    /**
+     * Обработка изменения хэша
+     */
+    function galleryByHash() {
+      /**
+       * Матч хэша по урлу
+       * @type {Object}
+       */
+      var hashMatch;
+
+      /**
+       * Хэш страницы
+       * @type {string}
+       */
+      var locationHash = location.hash;
+      if (locationHash === '') {
+        gallery.hide();
+      } else {
+        hashMatch = locationHash.match(/#photo\/(\S+)/);
+        gallery.render(hashMatch[1]);
+      }
     }
 
   });
