@@ -577,5 +577,6 @@ input[type=radio]:checked + .upload-filter-label {
 }
 
 .likes-count-liked:before {
-  background-position-x: -18px;
+  /*Firefox fix*/
+  background-position: -18px 0;
 }

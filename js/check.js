@@ -1,26 +1,58 @@
+/**
+ * @fileoverview
+ * @author Gleb Vorontsov
+ */
+
+'use strict';
+
+/**
+ * Анализ входного изображения при загрузке
+ * @param {boolean|number|Array} a
+ * @param {Array=} b
+ * @returns {string} message
+ */
+
 function getMessage(a, b) {
 
+  /**
+   * Строка которая содержит сообщение пользователю.
+   * @type {string}
+   */
+  var message = '';
+
+  /**
+   * Картинка GIF
+   */
   if ( typeof(a) == 'boolean' ) {
     if (a) {
-      return 'Переданное GIF-изображение анимировано и содержит ' + b + ' кадров';
+      message = 'Переданное GIF-изображение анимировано и содержит ' + b + ' кадров';
     }
     else {
-      return 'Переданное GIF-изображение не анимировано';
+      message = 'Переданное GIF-изображение не анимировано';
     }
   }
 
+  /**
+   * Картинка SVG
+   */
   if (typeof(a) == 'number') {
-    return 'Переданное SVG-изображение содержит ' + a + ' объектов и ' + b * 4 +' аттрибутов';
+    message =  'Переданное SVG-изображение содержит ' + a + ' объектов и ' + b * 4 +' аттрибутов';
   }
 
+  /**
+   * Красные точки в картинке
+   */
   if (Array.isArray(a)) {
     var sum = 0;
     for (var i = 0; i < a.length; i++ ) {
       sum += a[i];
     }
-    return 'Количество красных точек во всех строчках изображения: ' + sum;
+    message = 'Количество красных точек во всех строчках изображения: ' + sum;
   }
 
+  /**
+   * Картинка JPEG
+   */
   if ( Array.isArray(a) && Array.isArray(b) ) {
     var square = 0;
     var minArray = 0;
@@ -36,6 +68,8 @@ function getMessage(a, b) {
       square += a[i] * b[i];
     }
 
-    return 'Общая площадь артефактов сжатия: ' + square + 'пикселей';
+    message = 'Общая площадь артефактов сжатия: ' + square + 'пикселей';
   }
+
+  return message;
 }

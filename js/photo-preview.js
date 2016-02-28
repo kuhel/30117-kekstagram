@@ -1,16 +1,14 @@
-/* global inherit: true, PhotoBase: true */
-
 /**
- * @fileoverview
+ * @fileoverview Наследуем в объект PhotoPreview методы и свойства объекта PhotoBase
  * @author Gleb Vorontsov
  */
 
 'use strict';
 
-(function() {
-
-  function PhotoPreview() {}
-
-  inherit(PhotoPreview, PhotoBase);
-
-})();
+define([
+  'inherit',
+  'photo-base'],
+  function(inherit, PhotoBase) {
+    function PhotoPreview() {}
+    inherit(PhotoPreview, PhotoBase);
+  });

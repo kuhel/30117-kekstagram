@@ -5,10 +5,14 @@
 
 'use strict';
 
-(function() {
+define(function() {
 
   function PhotoBase() {}
 
+  /**
+   * Данные о картинках
+   * @type {Object}
+   */
   PhotoBase.prototype._data = null;
 
   /**
@@ -31,11 +35,11 @@
 
   /**
    * Выдача данных
-   * @param {Object} data
+   * @return {Object} _data
    */
   PhotoBase.prototype.getData = function() {
     return this._data;
   };
 
-  window.PhotoBase = PhotoBase;
-})();
+  return PhotoBase;
+});
