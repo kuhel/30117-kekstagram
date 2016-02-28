@@ -37,12 +37,8 @@ define(
      */
     function Photo(data) {
       this._data = data;
-
       this.onPhotoClick = this.onPhotoClick.bind(this);
     }
-
-    inherit(Photo, PhotoBase);
-
 
     /**
      * Рендер одной картинки
@@ -73,7 +69,6 @@ define(
       this.element.addEventListener('click', this.onPhotoClick);
 
       elementImage.src = this._data.url;
-
 
       loadErrorTimeout = setTimeout(function() {
         elementImage.src = '';

@@ -1,5 +1,11 @@
 /**
  * @fileoverview Наследуем в объект PhotoPreview методы и свойства объекта PhotoBase
+=======
+/* global inherit: true, PhotoBase: true */
+
+/**
+ * @fileoverview
+>>>>>>> ca607851ff380100aace3eaff2251eec619b4fb8
  * @author Gleb Vorontsov
  */
 

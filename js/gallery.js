@@ -70,6 +70,7 @@ define(function() {
     this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
     this._onPhotoClick = this._onPhotoClick.bind(this);
     this._onLikeClick = this._onLikeClick.bind(this);
+
   };
 
   /**
@@ -130,12 +131,12 @@ define(function() {
     this.elementImage.removeEventListener('click', this._onPhotoClick);
 
     /**
-     * Слушаем Esc
+     * Убираем клик по лайку
      */
     this.elementLikes.removeEventListener('click', this._onLikeClick);
 
     /**
-     * Убираем клик по лайку
+     * Убираем Esc и другие клавиши
      */
     document.removeEventListener('keydown', this._onDocumentKeyDown);
   };
@@ -218,7 +219,6 @@ define(function() {
   };
 
 
-
   /**
    * Обработка клика по кресткику
    * @Private
@@ -257,6 +257,15 @@ define(function() {
   };
 
   /**
+   * Обработка клика по картинке в галереи
+   * @Private
+   */
+  Gallery.prototype._onPhotoClick = function() {
+    this.setNextPicture();
+    this.setCurrentPicture(this.currentPicture);
+  };
+
+  /**
    * Обработка нажатия клавиши Esc
    * @Private
    * @param {Event} evt
@@ -281,9 +290,6 @@ define(function() {
   Gallery.prototype.setHash = function(hash) {
     location.hash = hash ? 'photo/' + hash : '';
   };
-
-
-
 
   return Gallery;
 });

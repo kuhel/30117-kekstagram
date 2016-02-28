@@ -193,7 +193,6 @@ define([
      *
      */
     function setFilter() {
-
       filtersContainer.addEventListener('click', function(evt) {
         var clickedElement = evt.target;
         if (clickedElement.classList.contains('filters-radio')) {
@@ -223,8 +222,6 @@ define([
           addPicturesPage();
         }
       }, SCROLL_TIMEOUT);
-
-
     });
 
     /**
@@ -306,7 +303,6 @@ define([
       gallery.setPictures(filteredPictures);
 
     }
-
 
     /**
      * Получаем список картинок с сервера
