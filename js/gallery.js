@@ -70,7 +70,7 @@ define(function() {
     this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
     this._onPhotoClick = this._onPhotoClick.bind(this);
     this._onLikeClick = this._onLikeClick.bind(this);
-    //this._galleryByHash = this._galleryByHash.bind(this);
+    this.galleryByHash = this.galleryByHash.bind(this);
 
   };
 
@@ -310,40 +310,30 @@ define(function() {
   };
 
 
-  //
-  ///**
-  // * Слушаем изменение хэша и рисуем галерею
-  // */
-  //window.addEventListener('hashchange', this._galleryByHash);
-  //
-  ///**
-  // * Слушаем загрузку и рисуем галерею
-  // */
-  //window.addEventListener('load', this._galleryByHash);
-  //
-  ///**
-  // * Обработка изменения хэша
-  // * @Private
-  // */
-  //Gallery.prototype._galleryByHash = function() {
-  //  /**
-  //   * Матч хэша по урлу
-  //   * @type {Object}
-  //   */
-  //  var hashMatch;
-  //
-  //  /**
-  //   * Хэш страницы
-  //   * @type {string}
-  //   */
-  //  var locationHash = location.hash;
-  //  if (locationHash === '') {
-  //    this.hide();
-  //  } else {
-  //    hashMatch = locationHash.match(/#photo\/(\S+)/);
-  //    this.render(hashMatch[1])
-  //  }
-  //};
+
+  /**
+   * Обработка изменения хэша
+   * @Private
+   */
+  Gallery.prototype.galleryByHash = function() {
+    /**
+     * Матч хэша по урлу
+     * @type {Object}
+     */
+    var hashMatch;
+
+    /**
+     * Хэш страницы
+     * @type {string}
+     */
+    var locationHash = location.hash;
+    if (locationHash === '') {
+      this.hide();
+    } else {
+      hashMatch = locationHash.match(/#photo\/(\S+)/);
+      this.render(hashMatch[1])
+    }
+  };
 
 
 

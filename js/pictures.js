@@ -208,6 +208,15 @@ define([
 
 
 
+    /**
+     * Слушаем изменение хэша и рисуем галерею
+     */
+    window.addEventListener('hashchange', gallery.galleryByHash);
+
+    /**
+     * Слушаем загрузку и рисуем галерею
+     */
+    window.addEventListener('load', gallery.galleryByHash);
 
     /**
      * Слушаем загрузку и отрисовываем картинки
@@ -331,37 +340,6 @@ define([
       XHRequest.send();
     }
 
-    ///**
-    // * Слушаем изменение хэша и рисуем галерею
-    // */
-    //window.addEventListener('hashchange', galleryByHash);
-    //
-    ///**
-    // * Слушаем загрузку и рисуем галерею
-    // */
-    //window.addEventListener('load', galleryByHash);
-    //
-    ///**
-    // * Обработка изменения хэша
-    // */
-    //function galleryByHash() {
-    //  /**
-    //   * Матч хэша по урлу
-    //   * @type {Object}
-    //   */
-    //  var hashMatch;
-    //
-    //  /**
-    //   * Хэш страницы
-    //   * @type {string}
-    //   */
-    //  var locationHash = location.hash;
-    //  if (locationHash === '') {
-    //    gallery.hide();
-    //  } else {
-    //    hashMatch = locationHash.match(/#photo\/(\S+)/);
-    //    gallery.render(hashMatch[1]);
-    //  }
-    //}
+
 
   });
