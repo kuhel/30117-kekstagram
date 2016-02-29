@@ -55,7 +55,7 @@ define(function() {
 
     /**
      * Кейкоды необходимые для обработки нажатий кнопок
-     * @type {KeyCodes}
+     * @enum {number}
      */
     this.KeyCodes = {
       ESC: 27,

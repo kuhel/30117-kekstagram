@@ -47,16 +47,39 @@ define(
      */
     Photo.prototype.render = function() {
 
-
+      /**
+       * Селектора шаблона
+       * @type {String}
+       */
       var templateSelector = 'picture-template';
+
+      /**
+       * Шаблон
+       * @type {HTMLElement}
+       */
       var template = document.getElementById(templateSelector);
+
+      /**
+       * Создаем новую картинку
+       * @type {Image}
+       */
       var elementImage = new Image(ELEMENT_IMAGE_WIDTH, ELEMENT_IMAGE_HEIGHT);
       if ('content' in template) {
         this.element = template.content.childNodes[1].cloneNode(true);
       } else {
         this.element = template.childNodes[1].cloneNode(true);
       }
+
+      /**
+       * HTML элемент IMG
+       * @type {HTMLElement}
+       */
       var templateImage = this.element.querySelector('img');
+
+      /**
+       * Таймаут загрузки изображения
+       * @type {Timeout}
+       */
       var loadErrorTimeout;
 
       elementImage.addEventListener('load', function() {
