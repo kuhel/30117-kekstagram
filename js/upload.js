@@ -343,7 +343,7 @@ define([
        * Отформатированная дата
        * @type {string}
        */
-      var formatDate = birhday.split('/');
+      var formatDate = birthday.split('/');
 
       /**
        * Объект Дата для дня рождения
