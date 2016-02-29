@@ -137,8 +137,22 @@ define([
      */
     function resizeFormIsValid() {
 
+      /**
+       * Больше ли ширина изображения чем ширина кадрирования.
+       * @type {boolean}
+       */
       var isXSideLargeThenNaturalWidth = +resizeX.value + +resizeSize.value < currentResizer._image.naturalWidth;
+
+      /**
+       * Больше ли высота изображения чем высота кадрирования.
+       * @type {boolean}
+       */
       var isYSideLargeThenNaturalHeight = +resizeY.value + +resizeSize.value < currentResizer._image.naturalHeight;
+
+      /**
+       * Отрицательны ли значения в форме
+       * @type {boolean}
+       */
       var isTopAndLeftPositive = +resizeX.value < 0 || +resizeY.value < 0 || +resizeSize.value < 0;
 
       if (isXSideLargeThenNaturalWidth && isYSideLargeThenNaturalHeight && isTopAndLeftPositive) {
@@ -183,7 +197,9 @@ define([
       resizeFormIsValid();
     });
 
-
+    /**
+     * Прячем сообщение
+     */
     function hideMessage() {
       uploadMessage.classList.add('invisible');
     }
@@ -230,7 +246,14 @@ define([
       }
     });
 
+    /**
+     * Устанавливает значение фрейма в форму
+     */
     function setResizeValues() {
+      /**
+       * Базовые размеры
+       * @type {Object} размеры квадрата
+       */
       var baseSize = currentResizer.getConstraint();
       resizeX.value = Math.ceil(baseSize.x);
       resizeY.value = Math.ceil(baseSize.y);
@@ -238,7 +261,7 @@ define([
     }
 
     /**
-     * Передаетв объект resizer значения для метода moveConstraint
+     * Передает в объект resizer значения для метода moveConstraint
      */
     function setConstraitMoveValues() {
       currentResizer.moveConstraint(+resizeX.value, +resizeY.value, +resizeSize.value);
@@ -309,9 +332,23 @@ define([
      * @returns {string} expireDate
      */
     function cookieExpireDateByBirthday(birthday) {
+
+      /**
+       * Объект Дата
+       * @type {Date}
+       */
       var todayDate = new Date();
 
+      /**
+       * Отформатированная дата
+       * @type {string}
+       */
       var formatDate = birhday.split('/');
+
+      /**
+       * Объект Дата для дня рождения
+       * @type {Date}
+       */
       var birthdayDate = new Date();
       birthdayDate.setMonth(formatDate[1] - 1);
       birthdayDate.setDate(formatDate[0]);
@@ -329,6 +366,10 @@ define([
       }
 
 
+      /**
+       * Объект Дата для срока действия куки
+       * @type {Date}
+       */
       var expireDate = new Date(todayDate.valueOf() + (todayDate.valueOf() - birthdayDate.valueOf()));
 
       return expireDate.toUTCString();
@@ -356,8 +397,23 @@ define([
       cleanupResizer();
       updateBackground();
 
+      /**
+       * День рождения
+       * @type {String}
+       * @const
+       */
       var BIRTHDAY_DATE = '13/11';
+
+      /**
+       * Срок жизни куки
+       * @type {String}
+       */
       var cookieExpires = cookieExpireDateByBirthday(BIRTHDAY_DATE);
+
+      /**
+       *  Название фильтра картинки
+       * @type {String}
+       */
       var filterName = (filterImage.classList[1]) ? filterImage.classList[1] : 'no-filter';
       window.docCookies.setItem('filter', filterName, cookieExpires);
 
@@ -381,6 +437,10 @@ define([
         };
       }
 
+      /**
+       * Выбраный фильтр
+       * @type {HTMLElement}
+       */
       var selectedFilter = [].filter.call(filterForm['upload-filter'], function(item) {
         return item.checked;
       })[0].value;
@@ -396,6 +456,10 @@ define([
      *
      */
     function getLastFilter() {
+      /**
+       * Фильтр взятый из куки
+       * @type {String}
+       */
       var lastFilter = window.docCookies.getItem('filter');
       if (lastFilter) {
         filterImage.className = 'filter-image-preview ' + lastFilter;
