@@ -75,6 +75,7 @@ define([
      */
     var SCROLL_TIMEOUT = 100;
 
+
     /**
      * Активный фильтр берется из localStorage, если там есть запись
      * @type {string}
@@ -179,6 +180,8 @@ define([
       picturesContainer.appendChild(fragment);
     }
 
+
+
     /**
      * Записываем информацию о фильтре в localStorage
      * @param {String} id
@@ -186,6 +189,7 @@ define([
     function setLocalStorageFilter(id) {
       localStorage.setItem('picturesFilter', id);
     }
+
 
 
     /**
@@ -201,6 +205,9 @@ define([
         }
       });
     }
+
+
+
 
     /**
      * Слушаем загрузку и отрисовываем картинки
