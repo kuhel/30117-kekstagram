@@ -331,10 +331,11 @@ define([
      * @param {string} birthday
      * @returns {string} expireDate
      */
-    function cookieExpireDateByBirthday(birhday) {
+    function cookieExpireDateByBirthday(birthday) {
+
       /**
        * Объект Дата
-       * @type {Data}
+       * @type {Date}
        */
       var todayDate = new Date();
 
@@ -342,11 +343,11 @@ define([
        * Отформатированная дата
        * @type {string}
        */
-      var formatDate = birhday.split('/');
+      var formatDate = birthday.split('/');
 
       /**
        * Объект Дата для дня рождения
-       * @type {Data}
+       * @type {Date}
        */
       var birthdayDate = new Date();
       birthdayDate.setMonth(formatDate[1] - 1);
@@ -367,7 +368,7 @@ define([
 
       /**
        * Объект Дата для срока действия куки
-       * @type {Data}
+       * @type {Date}
        */
       var expireDate = new Date(todayDate.valueOf() + (todayDate.valueOf() - birthdayDate.valueOf()));
 
@@ -398,7 +399,7 @@ define([
 
       /**
        * День рождения
-       * @type {Number}
+       * @type {String}
        * @const
        */
       var BIRTHDAY_DATE = '13/11';

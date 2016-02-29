@@ -75,6 +75,7 @@ define([
      */
     var SCROLL_TIMEOUT = 100;
 
+
     /**
      * Активный фильтр берется из localStorage, если там есть запись
      * @type {string}
@@ -179,6 +180,8 @@ define([
       picturesContainer.appendChild(fragment);
     }
 
+
+
     /**
      * Записываем информацию о фильтре в localStorage
      * @param {String} id
@@ -186,6 +189,7 @@ define([
     function setLocalStorageFilter(id) {
       localStorage.setItem('picturesFilter', id);
     }
+
 
 
     /**
@@ -196,11 +200,23 @@ define([
       filtersContainer.addEventListener('click', function(evt) {
         var clickedElement = evt.target;
         if (clickedElement.classList.contains('filters-radio')) {
-          setActiveFilter(clickedElement.id);
+          setActiveFilter(clickedElement.id, false);
           setLocalStorageFilter(clickedElement.id);
         }
       });
     }
+
+
+
+    /**
+     * Слушаем изменение хэша и рисуем галерею
+     */
+    window.addEventListener('hashchange', gallery.galleryByHash);
+
+    /**
+     * Слушаем загрузку и рисуем галерею
+     */
+    window.addEventListener('load', gallery.galleryByHash);
 
     /**
      * Слушаем загрузку и отрисовываем картинки
@@ -324,37 +340,6 @@ define([
       XHRequest.send();
     }
 
-    /**
-     * Слушаем изменение хэша и рисуем галерею
-     */
-    window.addEventListener('hashchange', galleryByHash);
 
-    /**
-     * Слушаем загрузку и рисуем галерею
-     */
-    window.addEventListener('load', galleryByHash);
-
-    /**
-     * Обработка изменения хэша
-     */
-    function galleryByHash() {
-      /**
-       * Матч хэша по урлу
-       * @type {Object}
-       */
-      var hashMatch;
-
-      /**
-       * Хэш страницы
-       * @type {string}
-       */
-      var locationHash = location.hash;
-      if (locationHash === '') {
-        gallery.hide();
-      } else {
-        hashMatch = locationHash.match(/#photo\/(\S+)/);
-        gallery.render(hashMatch[1]);
-      }
-    }
 
   });
