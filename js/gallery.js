@@ -70,6 +70,7 @@ define(function() {
     this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
     this._onPhotoClick = this._onPhotoClick.bind(this);
     this._onLikeClick = this._onLikeClick.bind(this);
+    //this._galleryByHash = this._galleryByHash.bind(this);
 
   };
 
@@ -195,6 +196,7 @@ define(function() {
   };
 
 
+
   /**
    * Устанавливаем следующую картинку, если она существует
    */
@@ -203,6 +205,8 @@ define(function() {
       this.setHash(this.pictures[++this.currentPicture].url);
     }
   };
+
+
 
   /**
    * Устанавливаем предыдущую картинку, если она существует
@@ -213,10 +217,13 @@ define(function() {
     }
   };
 
+
+
   Gallery.prototype.hideGalleryWithHash = function() {
     this.hide();
     this.setHash('');
   };
+
 
 
   /**
@@ -226,6 +233,9 @@ define(function() {
   Gallery.prototype._onCloseClick = function() {
     this.hideGalleryWithHash();
   };
+
+
+
 
   /**
    * Обработка клика по картинке в галерее
@@ -265,23 +275,31 @@ define(function() {
     this.setCurrentPicture(this.currentPicture);
   };
 
+
+
+
   /**
    * Обработка нажатия клавиши Esc
    * @Private
    * @param {Event} evt
    */
   Gallery.prototype._onDocumentKeyDown = function(evt) {
+
     if (evt.keyCode === this.KeyCodes.ESC) {
       this.hideGalleryWithHash();
     }
+
     if (evt.keyCode === this.KeyCodes.LEFT_ARROW) {
       this.setPreviousPicture();
     }
+
     if (evt.keyCode === this.KeyCodes.RIGHT_ARROW) {
       this.setNextPicture();
     }
     this.setCurrentPicture(this.currentPicture);
   };
+
+
 
   /**
    * Установка либо очистка хэша
@@ -290,6 +308,44 @@ define(function() {
   Gallery.prototype.setHash = function(hash) {
     location.hash = hash ? 'photo/' + hash : '';
   };
+
+
+  //
+  ///**
+  // * Слушаем изменение хэша и рисуем галерею
+  // */
+  //window.addEventListener('hashchange', this._galleryByHash);
+  //
+  ///**
+  // * Слушаем загрузку и рисуем галерею
+  // */
+  //window.addEventListener('load', this._galleryByHash);
+  //
+  ///**
+  // * Обработка изменения хэша
+  // * @Private
+  // */
+  //Gallery.prototype._galleryByHash = function() {
+  //  /**
+  //   * Матч хэша по урлу
+  //   * @type {Object}
+  //   */
+  //  var hashMatch;
+  //
+  //  /**
+  //   * Хэш страницы
+  //   * @type {string}
+  //   */
+  //  var locationHash = location.hash;
+  //  if (locationHash === '') {
+  //    this.hide();
+  //  } else {
+  //    hashMatch = locationHash.match(/#photo\/(\S+)/);
+  //    this.render(hashMatch[1])
+  //  }
+  //};
+
+
 
   return Gallery;
 });
