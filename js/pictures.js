@@ -200,7 +200,7 @@ define([
       filtersContainer.addEventListener('click', function(evt) {
         var clickedElement = evt.target;
         if (clickedElement.classList.contains('filters-radio')) {
-          setActiveFilter(clickedElement.id);
+          setActiveFilter(clickedElement.id, false);
           setLocalStorageFilter(clickedElement.id);
         }
       });

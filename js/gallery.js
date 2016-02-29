@@ -253,16 +253,18 @@ define(function() {
   Gallery.prototype._onLikeClick = function() {
 
     var pictureToLike = this.pictures[this.currentPicture];
-    if (!pictureToLike.alreadyLiked === true) {
+    var likesCounter = pictureToLike.likes;
+    var isPictureLiked = pictureToLike.alreadyLiked;
+    if (!isPictureLiked === true) {
       this.elementLikesCount.classList.add('likes-count-liked');
-      pictureToLike.likes++;
-      this.elementLikesCount.innerHTML = pictureToLike.likes;
-      pictureToLike.alreadyLiked = true;
+      likesCounter++;
+      this.elementLikesCount.innerHTML = likesCounter;
+      isPictureLiked = true;
     } else {
       this.elementLikesCount.classList.remove('likes-count-liked');
-      pictureToLike.likes--;
-      this.elementLikesCount.innerHTML = pictureToLike.likes;
-      pictureToLike.alreadyLiked = false;
+      likesCounter--;
+      this.elementLikesCount.innerHTML = likesCounter;
+      isPictureLiked = false;
     }
   };
 

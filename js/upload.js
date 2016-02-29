@@ -308,7 +308,7 @@ define([
      * @param {string} birthday
      * @returns {string} expireDate
      */
-    function cookieExpireDateByBirthday(birhday) {
+    function cookieExpireDateByBirthday(birthday) {
       var todayDate = new Date();
 
       var formatDate = birhday.split('/');
