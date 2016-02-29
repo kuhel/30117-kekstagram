@@ -334,6 +334,7 @@ define([
      */
     window.addEventListener('load', galleryByHash);
 
+
     /**
      * Обработка изменения хэша
      */
