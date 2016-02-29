@@ -331,7 +331,7 @@ define(function() {
       this.hide();
     } else {
       hashMatch = locationHash.match(/#photo\/(\S+)/);
-      this.render(hashMatch[1])
+      this.render(hashMatch[1]);
     }
   };
 
