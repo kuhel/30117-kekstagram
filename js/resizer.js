@@ -1,21 +1,33 @@
 'use strict';
 
-(function() {
+define(function() {
+
   /**
    * @constructor
    * @param {string} image
    */
   var Resizer = function(image) {
-    // Изображение, с которым будет вестись работа.
+
+    /**
+     * Изображение, с которым будет вестись работа.
+     * @type {Image}
+     * @private
+     */
     this._image = new Image();
     this._image.src = image;
 
-    // Холст.
+    //
+    /**
+     * Холст.
+     * @type {HTMLElement}
+     */
     this._container = document.createElement('canvas');
     this._ctx = this._container.getContext('2d');
 
-    // Создаем холст только после загрузки изображения.
-    this._image.onload = function() {
+    /**
+     * Создаем холст только после загрузки изображения.
+     */
+    this._image.addEventListener('load', function() {
       // Размер холста равен размеру загруженного изображения. Это нужно
       // для удобства работы с координатами.
       this._container.width = this._image.naturalWidth;
@@ -28,23 +40,35 @@
        * @type {number}
        */
       var INITIAL_SIDE_RATIO = 0.75;
-      // Размер меньшей стороны изображения.
+
+      /**
+       * Размер меньшей стороны изображения.
+       * @type {number}
+       */
       var side = Math.min(
-          this._container.width * INITIAL_SIDE_RATIO,
-          this._container.height * INITIAL_SIDE_RATIO);
+        this._container.width * INITIAL_SIDE_RATIO,
+        this._container.height * INITIAL_SIDE_RATIO);
 
-      // Изначально предлагаемое кадрирование — часть по центру с размером в 3/4
-      // от размера меньшей стороны.
+
+      /**
+       * Изначально предлагаемое кадрирование — часть по центру с размером в 3/4
+       * от размера меньшей стороны.
+       * @type {Square}
+       */
       this._resizeConstraint = new Square(
-          this._container.width / 2 - side / 2,
-          this._container.height / 2 - side / 2,
-          side);
+        this._container.width / 2 - side / 2,
+        this._container.height / 2 - side / 2,
+        side);
 
-      // Отрисовка изначального состояния канваса.
+      /**
+       * Отрисовка изначального состояния канваса.
+       */
       this.redraw();
-    }.bind(this);
+    }).bind(this);
 
-    // Фиксирование контекста обработчиков.
+    /**
+     * Фиксирование контекста обработчиков.
+     */
     this._onDragStart = this._onDragStart.bind(this);
     this._onDragEnd = this._onDragEnd.bind(this);
     this._onDrag = this._onDrag.bind(this);
@@ -93,7 +117,7 @@
       this._ctx.strokeStyle = '#ffe753';
       // Размер штрихов. Первый элемент массива задает длину штриха, второй
       // расстояние между соседними штрихами.
-      this._ctx.setLineDash([15, 10]);
+      this._ctx.setLineDash([5, 10]);
       // Смещение первого штриха от начала линии.
       this._ctx.lineDashOffset = 7;
 
@@ -111,13 +135,27 @@
       // Координаты задаются от центра холста.
       this._ctx.drawImage(this._image, displX, displY);
 
+      var croppedRect = {
+        rectX: (-this._resizeConstraint.side / 2) - this._ctx.lineWidth,
+        rectY: (-this._resizeConstraint.side / 2) - this._ctx.lineWidth,
+        rectWidth: this._resizeConstraint.side - this._ctx.lineWidth,
+        rectHeight: this._resizeConstraint.side - this._ctx.lineWidth
+      };
+
+      this._showCropArea(croppedRect, this._ctx.lineWidth);
+
       // Отрисовка прямоугольника, обозначающего область изображения после
       // кадрирования. Координаты задаются от центра.
       this._ctx.strokeRect(
-          (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
-          (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
-          this._resizeConstraint.side - this._ctx.lineWidth / 2,
-          this._resizeConstraint.side - this._ctx.lineWidth / 2);
+        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
+        (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
+        this._resizeConstraint.side - this._ctx.lineWidth / 2,
+        this._resizeConstraint.side - this._ctx.lineWidth / 2);
+
+      var imageSize = this._image.naturalWidth + ' x ' + this._image.naturalHeight;
+      var axisX = 0;
+      var axisY = (-this._resizeConstraint.side / 2) - (this._ctx.lineWidth * 2);
+      this._displayText(imageSize, axisX, axisY);
 
       // Восстановление состояния канваса, которое было до вызова ctx.save
       // и последующего изменения системы координат. Нужно для того, чтобы
@@ -126,6 +164,86 @@
       // некорректно сработает даже очистка холста или нужно будет использовать
       // сложные рассчеты для координат прямоугольника, который нужно очистить.
       this._ctx.restore();
+    },
+
+    /**
+     *  Затемнение некропнутой области изображения
+     * @param {Object} rectangle
+     * @param {number} lineWidth
+     * @private
+     */
+    _showCropArea: function(rectangle, lineWidth) {
+      this._ctx.save();
+
+      var mask = document.createElement('canvas');
+      mask.width = this._container.width;
+      mask.height = this._container.height;
+      var ctxMask = mask.getContext('2d');
+
+      ctxMask.fillStyle = 'rgba(0, 0, 0, 0.9)';
+      ctxMask.fillRect(0, 0, mask.width, mask.height);
+
+      ctxMask.globalCompositeOperation = 'destination-out';
+
+      ctxMask.translate( mask.width / 2, mask.height / 2);
+      ctxMask.fillRect(
+        rectangle.rectX,
+        rectangle.rectY,
+        rectangle.rectWidth + 1.5 * lineWidth,
+        rectangle.rectHeight + 1.5 * lineWidth);
+      this._ctx.drawImage(mask, -mask.width / 2, -mask.height / 2);
+      //this._drawDottedRectangle('x', rectangle.rectX, rectangle.rectY, rectangle.rectWidth + 1.5 * lineWidth, rectangle.rectHeight + 1.5 * lineWidth, 10, '#ffffff', 2);
+
+      this._ctx.restore();
+    },
+
+    /**
+     * Ввыод текста с масшатабами изображения
+     * @param {string} rectSize
+     * @param {number} axisX
+     * @param {number} axisY
+     * @private
+     */
+    _displayText: function(rectSize, axisX, axisY) {
+      this._ctx.fillStyle = '#ffffff';
+      this._ctx.font = '12pt Helvetica';
+      this._ctx.textAlign = 'center';
+
+      this._ctx.fillText(rectSize, axisX, axisY);
+    },
+
+    /**
+     * Рисуем рамку точками
+     * @param {string} axis
+     * @param {number} startPointX
+     * @param {number} startPointY
+     * @param {number} rectWidth
+     * @param {number} rectHeight
+     * @param {number} lineStep
+     * @param {string} lineColor
+     * @param {number} lineWidth
+     * @private
+     */
+    _drawDottedRectangle: function(axis, startPointX, startPointY, rectWidth, rectHeight, lineStep, lineColor, lineWidth) {
+      this._ctx.beginPath();
+      this._ctx.fillStyle = lineColor;
+
+      var endPointX = startPointX + rectWidth;
+      for ( var i = startPointX; i <= endPointX; i += lineStep) {
+        this._ctx.arc( i, startPointY, lineWidth, 0, Math.PI * 2, true );
+      }
+      this._ctx.closePath();
+      this._ctx.fill();
+
+      this._ctx.beginPath();
+      this._ctx.fillStyle = lineColor;
+      var endPointY = startPointY + rectHeight;
+      for ( i = startPointY; i <= endPointY; i += lineStep) {
+        this._ctx.arc( endPointX, i, lineWidth, 0, Math.PI * 2, true );
+      }
+
+      this._ctx.closePath();
+      this._ctx.fill();
     },
 
     /**
@@ -160,8 +278,8 @@
      */
     updatePosition: function(x, y) {
       this.moveConstraint(
-          this._cursorPosition.x - x,
-          this._cursorPosition.y - y);
+        this._cursorPosition.x - x,
+        this._cursorPosition.y - y);
       this._cursorPosition = new Coordinate(x, y);
     },
 
@@ -221,9 +339,9 @@
      */
     moveConstraint: function(deltaX, deltaY, deltaSide) {
       this.setConstraint(
-          this._resizeConstraint.x + (deltaX || 0),
-          this._resizeConstraint.y + (deltaY || 0),
-          this._resizeConstraint.side + (deltaSide || 0));
+        this._resizeConstraint.x + (deltaX || 0),
+        this._resizeConstraint.y + (deltaY || 0),
+        this._resizeConstraint.side + (deltaSide || 0));
     },
 
     /**
@@ -280,8 +398,8 @@
       temporaryCanvas.width = this._resizeConstraint.side;
       temporaryCanvas.height = this._resizeConstraint.side;
       temporaryCtx.drawImage(this._image,
-          -this._resizeConstraint.x,
-          -this._resizeConstraint.y);
+        -this._resizeConstraint.x,
+        -this._resizeConstraint.y);
       imageToExport.src = temporaryCanvas.toDataURL('image/png');
 
       return imageToExport;
@@ -314,5 +432,5 @@
     this.y = y;
   };
 
-  window.Resizer = Resizer;
-})();
+  return Resizer;
+});

@@ -1,5 +1,3 @@
-/* global pictures: true */
-
 /**
  * @fileoverview
  * @author Gleb Vorontsov
@@ -8,59 +6,340 @@
 'use strict';
 
 
-(function() {
-  var picturesContainer = document.querySelector('.pictures');
-  var filtersContainer = document.querySelector('.filters');
-  filtersContainer.classList.remove('hidden');
+define([
+  'photo',
+  'gallery'],
+  function(Photo, Gallery) {
+    /**
+     * Массив загруженных картинок
+     * @type {Array.<Object>}
+     */
+    var pictures = [];
 
-  //Создаёт для каждой записи массива pictures блок фотографии на основе шаблона #picture-template
-  pictures.forEach(function(picture) {
-    var element = getElementFromTemplate(picture);
-    picturesContainer.appendChild(element);
-  });
+    /**
+     * Массив остортированных по филтру картинок
+     * @type {Array.<Object>}
+     */
+    var filteredPictures = [];
 
-  /**
-   * Создаем новый DOM элемент на основе шаблона
-   * @param {Object} data
-   * @return {Element}
-   */
-  function getElementFromTemplate(data) {
-    var templateSelector = 'picture-template';
-    var template = document.getElementById(templateSelector);
-    var element;
+    /**
+     * Массив отрисованных картинок
+     * @type {Array.<Object>}
+     */
+    var renderedPictures = [];
 
-    if ('content' in template) {
-      element = template.content.childNodes[1].cloneNode(true);
-    } else {
-      element = template.childNodes[1].cloneNode(true);
+    /**
+     * Контейнер всех картинок
+     * @type {HTMLElement}
+     */
+    var picturesContainer = document.querySelector('.pictures');
+
+    /**
+     * Контейнер инпутов фильтров
+     * @type {HTMLElement}
+     */
+    var filtersContainer = document.querySelector('.filters');
+
+    /**
+     * Фильтр по умолчанию
+     * @type {string}
+     * @const
+     */
+    var DEFAULT_FILTER = 'filter-popular';
+
+    /**
+     * Размер стороны картинки-превьюшки
+     * @type {number}
+     * @const
+     */
+    var IMAGE_SIDE = 182;
+
+    /**
+     * Таймаут загрузки картинки с сервера
+     * @type {number}
+     * @const
+     */
+    var IMAGE_LOAD_TIMEOUT = 10000;
+
+    /**
+     * Количество картинок выводящихся в одном блоке(странице)
+     * @type {number}
+     * @const
+     */
+    var PAGE_SIZE = 12;
+
+    /**
+     * Таймаут троттла скролла
+     * @type {number}
+     * @const
+     */
+    var SCROLL_TIMEOUT = 100;
+
+
+    /**
+     * Активный фильтр берется из localStorage, если там есть запись
+     * @type {string}
+     */
+    var activeFilter = localStorage.getItem('picturesFilter') || DEFAULT_FILTER;
+
+    /**
+     * Текущий блок(страница) с картинками
+     * @type {number}
+     */
+    var currentPage = 0;
+
+    /**
+     * Функция устанавливающая таймаут на скролл
+     * @type {function}
+     */
+    var scrollTimeout;
+
+    /**
+     * Объект галереи
+     * @type {Gallery}
+     */
+    var gallery = new Gallery();
+
+
+    /**
+     * Показываем контейнер с филтрами
+     */
+    filtersContainer.classList.remove('hidden');
+
+    /**
+     * Нужно ли догружать картинки
+     * @returns {boolean}
+     */
+    function loadedNextPage() {
+      return ((picturesContainer.getBoundingClientRect().bottom - IMAGE_SIDE <= window.innerHeight) && (currentPage < Math.ceil(filteredPictures.length / PAGE_SIZE)));
     }
 
-    var ELEMENT_IMAGE_WIDTH = 182;
-    var ELEMENT_IMAGE_HEIGHT = 182;
-    var elementImage = new Image(ELEMENT_IMAGE_WIDTH, ELEMENT_IMAGE_HEIGHT);
-    elementImage.src = data.url;
-
-    var templateImage = element.querySelector('img');
-
-    var loadErrorTimeout = setTimeout(function() {
-      element.classList.add('picture-load-failure');
-    }, 10000);
-
-    elementImage.onload = function() {
-      element.replaceChild(elementImage, templateImage);
-      clearTimeout(loadErrorTimeout);
-    };
-    elementImage.onerror = function() {
-      element.classList.add('picture-load-failure');
-      console.log(data.url + ' not loaded');
-    };
 
 
+    /**
+     * Отрисовка списка картинок
+     * @param {Array.<Object>} picturesToRender
+     * @param {number} pageNumber
+     * @param {boolean=} replace
+     */
+    function renderPictures(picturesToRender, pageNumber, replace) {
 
-    element.querySelector('.picture-comments').textContent = data.comments;
-    element.querySelector('.picture-likes').textContent = data.likes;
+      /**
+       * Обнулим контейнер если требуется
+       */
+      if (replace) {
+        currentPage = 0;
+        var el;
+        while ((el = renderedPictures.shift())) {
+          picturesContainer.removeChild(el.element);
+          el.onClick = null;
+        }
+      }
 
-    return element;
-  }
+      /**
+       * Контейнер который наполнят картинками и добавят в DOM
+       * @type {HTMLElement}
+       */
+      var fragment = document.createDocumentFragment();
 
-})();
+      /**
+       * С какой картинки отрисовываем блок с картинками
+       * @type {number}
+       */
+      var renderFrom = pageNumber * PAGE_SIZE;
+
+      /**
+       * По какой элемент отрисовываем блок с картинками
+       * @type {number}
+       */
+      var renderTo = renderFrom + PAGE_SIZE;
+
+      /**
+       * Массив картинок для отрисовки блока
+       * @type {Array.<Object>}
+       */
+      var pagePictures = picturesToRender.slice(renderFrom, renderTo);
+
+      renderedPictures = renderedPictures.concat(pagePictures.map(function(picture) {
+
+        /**
+         * Объект Photo
+         * @type {Photo}
+         */
+        var elementPicture = new Photo(picture);
+        elementPicture.setData(picture);
+        elementPicture.render();
+        fragment.appendChild(elementPicture.element);
+        elementPicture.onClick = function() {
+          gallery.setData(elementPicture.getData());
+          gallery.setHash(picture.url);
+        };
+        return elementPicture;
+      }));
+
+      picturesContainer.appendChild(fragment);
+    }
+
+
+
+    /**
+     * Записываем информацию о фильтре в localStorage
+     * @param {String} id
+     */
+    function setLocalStorageFilter(id) {
+      localStorage.setItem('picturesFilter', id);
+    }
+
+
+
+    /**
+     * Установка фильтрации
+     *
+     */
+    function setFilter() {
+      filtersContainer.addEventListener('click', function(evt) {
+        var clickedElement = evt.target;
+        if (clickedElement.classList.contains('filters-radio')) {
+          setActiveFilter(clickedElement.id, false);
+          setLocalStorageFilter(clickedElement.id);
+        }
+      });
+    }
+
+
+
+    /**
+     * Слушаем изменение хэша и рисуем галерею
+     */
+    window.addEventListener('hashchange', gallery.galleryByHash);
+
+    /**
+     * Слушаем загрузку и рисуем галерею
+     */
+    window.addEventListener('load', gallery.galleryByHash);
+
+    /**
+     * Слушаем загрузку и отрисовываем картинки
+     */
+    window.addEventListener('load', addPicturesPage);
+
+    /**
+     * Слушаем изменение размеров окна и отрисовываем картинки
+     */
+    window.addEventListener('resize', addPicturesPage);
+
+    /**
+     * Слушаем скролл и отрисовываем картинки
+     */
+    window.addEventListener('scroll', function() {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(function() {
+        while (loadedNextPage()) {
+          addPicturesPage();
+        }
+      }, SCROLL_TIMEOUT);
+    });
+
+    /**
+     * Добавляем секцию с картинками в контейнер картинок
+     *
+     */
+    function addPicturesPage() {
+      var picturesContainerCoordinates = document.querySelector('.pictures').getBoundingClientRect();
+      var viewportSize = window.innerHeight;
+
+      if (picturesContainerCoordinates.bottom - viewportSize <= picturesContainerCoordinates.height) {
+        if (currentPage < Math.ceil(filteredPictures.length / PAGE_SIZE)) {
+          renderPictures(filteredPictures, ++currentPage, false);
+        }
+      }
+    }
+
+    /**
+     * Загружаем картинки
+     */
+    getPictures();
+
+    /**
+     * Устанавливаем сортировку
+     */
+    setFilter();
+
+
+    /**
+     * Установка выбранного фильтра
+     * @param {string} id
+     * @param {boolean} force
+     */
+    function setActiveFilter(id, force) {
+
+
+      if ( activeFilter === id && !force) {
+        return;
+      }
+
+      activeFilter = id;
+      currentPage = 0;
+
+      /**
+       * Выставляем актвиный фильтр
+       */
+      var selectedFilter = document.querySelector('#' + activeFilter);
+      if (selectedFilter) {
+        selectedFilter.setAttribute('checked', 'false');
+      }
+      document.querySelector('#' + id).setAttribute('checked', 'true');
+
+      filteredPictures = pictures.slice(0);
+
+      switch (id) {
+        case 'filter-new':
+          // Сортировка по дате по убыванию
+          filteredPictures = filteredPictures.sort(function(a, b) {
+            return new Date(b.date) - new Date(a.date);
+          });
+          break;
+
+        case 'filter-discussed':
+          // Сортировка по количеству комментариев по убванию
+          filteredPictures = filteredPictures.sort(function(a, b) {
+            return b.comments - a.comments;
+          });
+          break;
+
+        case 'filter-popular':
+          // Сортировка по популярности
+          filteredPictures = filteredPictures.sort(function(a, b) {
+            return b.likes - a.likes;
+          });
+          break;
+      }
+
+      renderPictures(filteredPictures, 0, true);
+      gallery.setPictures(filteredPictures);
+
+    }
+
+    /**
+     * Получаем список картинок с сервера
+     */
+    function getPictures() {
+      var XHRequest = new XMLHttpRequest();
+
+      XHRequest.open('GET', 'http://o0.github.io/assets/json/pictures.json');
+      XHRequest.timeout = IMAGE_LOAD_TIMEOUT;
+      document.querySelector('.pictures').classList.add('pictures-loading');
+
+      XHRequest.addEventListener('load', function(event) {
+        var rawData = event.target.response;
+        pictures = JSON.parse(rawData);
+        document.querySelector('.pictures').classList.remove('pictures-loading');
+        setActiveFilter(activeFilter, true);
+      });
+
+      XHRequest.send();
+    }
+
+
+
+  });
